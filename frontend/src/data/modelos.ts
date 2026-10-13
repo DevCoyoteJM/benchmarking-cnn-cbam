@@ -10,6 +10,7 @@ export interface ModeloIA {
   categoria: string;
   principal: boolean;
   estado: EstadoModelo;
+  color: string;
 }
 
 export const modelos: ModeloIA[] = [
@@ -20,6 +21,7 @@ export const modelos: ModeloIA[] = [
     categoria: "CNN",
     principal: true,
     estado: "pendiente",
+    color: "unet",
   },
   {
     id: "unet-cbam",
@@ -28,6 +30,7 @@ export const modelos: ModeloIA[] = [
     categoria: "CNN con atención",
     principal: true,
     estado: "pendiente",
+    color: "cbam",
   },
   {
     id: "modcbam",
@@ -36,6 +39,7 @@ export const modelos: ModeloIA[] = [
     categoria: "Modelo experimental",
     principal: false,
     estado: "pendiente",
+    color: "modcbam",
   },
   {
     id: "transunet",
@@ -44,5 +48,6 @@ export const modelos: ModeloIA[] = [
     categoria: "Modelo experimental",
     principal: false,
     estado: "pendiente",
+    color: "transunet",
   },
 ];

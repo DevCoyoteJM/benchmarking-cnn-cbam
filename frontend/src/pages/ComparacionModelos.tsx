@@ -1,57 +1,134 @@
-import {
-  BarChart3,
-  Brain,
-  CheckCircle2,
-  CircleHelp,
-  Download,
-  FlaskConical,
-  Info,
-  Target,
-} from "lucide-react";
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
-import { useState } from "react";
-import { modelos } from "../data/modelos";
 
-const metricasDemo = [
-  { nombre: "Exactitud", cnn: 91, cbam: 94 },
-  { nombre: "Precisión", cnn: 89, cbam: 93 },
-  { nombre: "Sensibilidad", cnn: 92, cbam: 95 },
-  { nombre: "F1-score", cnn: 90, cbam: 94 },
-];
+import { FlaskConical, Info } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { modelos } from "../data/modelos";
+import {
+  historialResultados,
+  type ResultadoModelo,
+} from "../data/resultados";
+
+import GraficaComparacion from "../components/GraficaComparacion";
+import HistorialExperimentos from "../components/HistorialExperimentos";
+import SelectorVersiones from "../components/SelectorVersiones";
+import ImportarResultados from "../components/ImportarResultados";
+import ExportarResultados from "../components/ExportarResultados";
+import DetalleExperimento from "../components/DetalleExperimento";
+import EvidenciasExperimento from "../components/EvidenciasExperimento";
+
+type PestanaComparacion =
+  | "comparacion"
+  | "experimentos"
+  | "evidencias"
+  | "datos";
+
+const CLAVE_ALMACENAMIENTO = "pulmovision_experimentos";
 
 export default function ComparacionModelos() {
-  const exportarCSV = () => {
-    const filas = [
-      ["Métrica", "CNN tradicional (%)", "CNN-CBAM (%)"],
-      ...metricasDemo.map((m) => [m.nombre, m.cnn, m.cbam]),
-    ];
+  // Pestaña activa
+  const [pestanaActiva, setPestanaActiva] =
+    useState<PestanaComparacion>("comparacion");
 
-    const contenido = filas.map((fila) => fila.join(",")).join("\n");
-    const blob = new Blob(["\uFEFF" + contenido], {
-      type: "text/csv;charset=utf-8;",
-    });
-    const url = URL.createObjectURL(blob);
-    const enlace = document.createElement("a");
-
-    enlace.href = url;
-    enlace.download = "comparacion-demostrativa.csv";
-    enlace.click();
-
-    URL.revokeObjectURL(url);
-  };
-
+  // Modelos seleccionados para comparar
   const [modelosSeleccionados, setModelosSeleccionados] =
     useState<string[]>(["unet", "unet-cbam"]);
 
+  // Versión seleccionada de cada modelo
+  const [versionesSeleccionadas, setVersionesSeleccionadas] =
+    useState<Record<string, string>>({});
+
+  // Recuperar experimentos almacenados en el navegador
+  const [experimentos, setExperimentos] =
+    useState<ResultadoModelo[]>(() => {
+      try {
+        const guardados = localStorage.getItem(
+          CLAVE_ALMACENAMIENTO
+        );
+
+        if (guardados) {
+          const datos: unknown = JSON.parse(guardados);
+
+          if (
+            Array.isArray(datos) &&
+            datos.every((item) => {
+              if (
+                item === null ||
+                typeof item !== "object" ||
+                Array.isArray(item)
+              ) {
+                return false;
+              }
+
+              const registro = item as Record<string, unknown>;
+
+              return (
+                typeof registro.id === "string" &&
+                typeof registro.modeloId === "string" &&
+                typeof registro.version === "string" &&
+                typeof registro.descripcion === "string" &&
+                (registro.fecha === null ||
+                  typeof registro.fecha === "string") &&
+                ["pendiente", "parcial", "finalizado"].includes(
+                  String(registro.estado)
+                ) &&
+                registro.metricas !== null &&
+                typeof registro.metricas === "object" &&
+                !Array.isArray(registro.metricas)
+              );
+            })
+          ) {
+            return datos as ResultadoModelo[];
+          }
+        }
+      } catch (error) {
+        console.error(
+          "No se pudieron recuperar los experimentos:",
+          error
+        );
+      }
+
+      return [...historialResultados];
+    });
+
+  // Guardar automáticamente los experimentos
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        CLAVE_ALMACENAMIENTO,
+        JSON.stringify(experimentos)
+      );
+    } catch (error) {
+      console.error(
+        "No se pudieron guardar los experimentos:",
+        error
+      );
+    }
+  }, [experimentos]);
+
+  // Importar uno o varios resultados
+  const importarResultado = (
+    nuevosResultados: ResultadoModelo[]
+  ) => {
+    setExperimentos((actuales) => {
+      const actualizados = [...actuales];
+
+      nuevosResultados.forEach((nuevo) => {
+        const indice = actualizados.findIndex(
+          (resultado) => resultado.id === nuevo.id
+        );
+
+        if (indice >= 0) {
+          actualizados[indice] = nuevo;
+        } else {
+          actualizados.push(nuevo);
+        }
+      });
+
+      return actualizados;
+    });
+  };
+
+  // Activar o desactivar un modelo
   const cambiarSeleccion = (id: string) => {
     setModelosSeleccionados((actuales) =>
       actuales.includes(id)
@@ -60,184 +137,328 @@ export default function ComparacionModelos() {
     );
   };
 
+  // Cambiar la versión de un modelo
+  const cambiarVersion = (
+    modeloId: string,
+    experimentoId: string
+  ) => {
+    setVersionesSeleccionadas((actuales) => ({
+      ...actuales,
+      [modeloId]: experimentoId,
+    }));
+  };
+
+  // Obtener la versión seleccionada o la última registrada
+  const obtenerResultadoSeleccionado = (modeloId: string) => {
+    const versiones = experimentos.filter(
+      (resultado) => resultado.modeloId === modeloId
+    );
+
+    const idSeleccionado =
+      versionesSeleccionadas[modeloId];
+
+    return (
+      versiones.find(
+        (version) => version.id === idSeleccionado
+      ) ?? versiones[versiones.length - 1]
+    );
+  };
+
+  // Construir la comparación dinámica
+  const comparacionActual = modelos
+    .filter((modelo) =>
+      modelosSeleccionados.includes(modelo.id)
+    )
+    .map((modelo) => ({
+      ...modelo,
+      resultado: obtenerResultadoSeleccionado(modelo.id),
+    }));
+
+  // Convertir una métrica de 0-1 a porcentaje
+  const porcentaje = (valor?: number) => {
+    if (valor === undefined || !Number.isFinite(valor)) {
+      return "—";
+    }
+
+    return `${(valor * 100).toFixed(2)}%`;
+  };
+
   return (
     <div className="comparison-page">
+      {/* ENCABEZADO */}
       <div className="comparison-header">
         <div>
           <div className="eyebrow">
             <FlaskConical size={15} />
             EVALUACIÓN EXPERIMENTAL
           </div>
+
           <h2>Comparación de modelos</h2>
+
           <p>
-            Análisis comparativo del desempeño de una CNN tradicional y una
-            arquitectura con mecanismo de atención CBAM.
+            Análisis comparativo de arquitecturas de
+            inteligencia artificial aplicadas al estudio
+            de imágenes pulmonares, con seguimiento de
+            métricas, versiones y configuraciones
+            experimentales.
           </p>
         </div>
-
-        <button className="export-button" onClick={exportarCSV}>
-          <Download size={17} />
-          Exportar CSV
-        </button>
       </div>
 
+      {/* AVISO SOBRE LOS RESULTADOS */}
       <div className="comparison-notice">
         <Info size={20} />
+
         <div>
-          <strong>Datos de demostración</strong>
+          <strong>Resultados experimentales</strong>
+
           <p>
-            Los valores de esta página son ficticios y sirven únicamente
-            para probar la interfaz. No representan resultados del
-            entrenamiento ni deben utilizarse en las conclusiones académicas.
+            Las métricas se muestran cuando se han
+            incorporado mediante los archivos de
+            resultados. Los valores pendientes no
+            representan evaluaciones realizadas.
+            Los resultados importados deben verificarse
+            antes de utilizarlos en las conclusiones
+            académicas.
           </p>
         </div>
       </div>
 
-      <section className="selector-modelos">
-        <h3>Seleccionar modelos para comparar</h3>
+      {/* NAVEGACIÓN POR PESTAÑAS */}
+      <nav
+        className="comparacion-tabs"
+        aria-label="Secciones de comparación"
+      >
+        <button
+          type="button"
+          className={
+            pestanaActiva === "comparacion" ? "active" : ""
+          }
+          aria-current={
+            pestanaActiva === "comparacion" ? "page" : undefined
+          }
+          onClick={() => setPestanaActiva("comparacion")}
+        >
+          Comparación
+        </button>
 
-        <p>
-          Selecciona las arquitecturas que deseas incluir
-          en la comparación.
-        </p>
+        <button
+          type="button"
+          className={
+            pestanaActiva === "experimentos" ? "active" : ""
+          }
+          aria-current={
+            pestanaActiva === "experimentos" ? "page" : undefined
+          }
+          onClick={() => setPestanaActiva("experimentos")}
+        >
+          Experimentos
+        </button>
 
-        <div className="selector-modelos-grid">
-          {modelos.map((modelo) => (
-            <label
-              key={modelo.id}
-              className="selector-modelo-item"
-            >
-              <input
-                type="checkbox"
-                checked={modelosSeleccionados.includes(modelo.id)}
-                onChange={() => cambiarSeleccion(modelo.id)}
-              />
+        <button
+          type="button"
+          className={
+            pestanaActiva === "evidencias" ? "active" : ""
+          }
+          aria-current={
+            pestanaActiva === "evidencias" ? "page" : undefined
+          }
+          onClick={() => setPestanaActiva("evidencias")}
+        >
+          Evidencias
+        </button>
 
-              <div>
-                <strong>{modelo.nombre}</strong>
-                <span>{modelo.descripcion}</span>
-              </div>
-            </label>
-          ))}
-        </div>
+        <button
+          type="button"
+          className={
+            pestanaActiva === "datos" ? "active" : ""
+          }
+          aria-current={
+            pestanaActiva === "datos" ? "page" : undefined
+          }
+          onClick={() => setPestanaActiva("datos")}
+        >
+          Gestión de datos
+        </button>
+      </nav>
 
-        <p className="selector-modelos-info">
-          {modelosSeleccionados.length} de {modelos.length} modelos
-          seleccionados.
-        </p>
-      </section>
+      {/* PESTAÑA 1: COMPARACIÓN */}
+      {pestanaActiva === "comparacion" && (
+        <>
+          <section className="selector-modelos">
+            <h3>Seleccionar modelos para comparar</h3>
 
-      <div className="comparison-models">
-        {modelos.map((modelo) => (
-          <article className="model-card" key={modelo.nombre}>
-            <div className={`model-symbol ${modelo.color}`}>
-              <Brain size={24} />
-            </div>
-            <div className="model-label">{modelo.subtitulo}</div>
-            <h3>{modelo.nombre}</h3>
-            <p>{modelo.descripcion}</p>
-            <div className="model-status">
-              <CircleHelp size={15} />
-              Pendiente de conectar resultados reales
-            </div>
-          </article>
-        ))}
-      </div>
+            <p>
+              Selecciona las arquitecturas que deseas
+              incluir en la comparación.
+            </p>
 
-      <section className="comparison-section">
-        <div className="comparison-section-heading">
-          <div className="section-icon">
-            <BarChart3 size={20} />
-          </div>
-          <div>
-            <h3>Indicadores de desempeño</h3>
-            <p>Comparación ilustrativa en una escala porcentual</p>
-          </div>
-        </div>
+            <div className="selector-modelos-grid">
+              {modelos.map((modelo) => (
+                <label
+                  key={modelo.id}
+                  className="selector-modelo-item"
+                >
+                  <input
+                    type="checkbox"
+                    checked={modelosSeleccionados.includes(
+                      modelo.id
+                    )}
+                    onChange={() =>
+                      cambiarSeleccion(modelo.id)
+                    }
+                  />
 
-        <div className="comparison-chart">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart
-              data={metricasDemo}
-              margin={{ top: 12, right: 15, left: 0, bottom: 5 }}
-            >
-              <CartesianGrid stroke="#edf0f5" strokeDasharray="4 4" />
-              <XAxis
-                dataKey="nombre"
-                tick={{ fill: "#7b8498", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                domain={[0, 100]}
-                tick={{ fill: "#7b8498", fontSize: 11 }}
-                axisLine={false}
-                tickLine={false}
-                tickFormatter={(valor) => `${valor}%`}
-              />
-              <Tooltip formatter={(valor) => [`${valor}%`]} />
-              <Legend />
-              <Bar
-                dataKey="cnn"
-                name="CNN tradicional"
-                fill="#7c69df"
-                radius={[5, 5, 0, 0]}
-              />
-              <Bar
-                dataKey="cbam"
-                name="CNN-CBAM"
-                fill="#16a58a"
-                radius={[5, 5, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
-
-      <section className="comparison-section">
-        <div className="comparison-section-heading">
-          <div className="section-icon">
-            <Target size={20} />
-          </div>
-          <div>
-            <h3>Tabla comparativa</h3>
-            <p>Valores porcentuales de ejemplo</p>
-          </div>
-        </div>
-
-        <div className="comparison-table-wrapper">
-          <table className="comparison-table">
-            <thead>
-              <tr>
-                <th>Métrica</th>
-                <th>CNN tradicional</th>
-                <th>CNN-CBAM</th>
-              </tr>
-            </thead>
-            <tbody>
-              {metricasDemo.map((metrica) => (
-                <tr key={metrica.nombre}>
-                  <td>{metrica.nombre}</td>
-                  <td>{metrica.cnn}%</td>
-                  <td>
-                    <span className="metric-value">
-                      {metrica.cbam}%
-                      <CheckCircle2 size={15} />
-                    </span>
-                  </td>
-                </tr>
+                  <div>
+                    <strong>{modelo.nombre}</strong>
+                    <span>{modelo.descripcion}</span>
+                  </div>
+                </label>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+            </div>
 
+            <p className="selector-modelos-info">
+              {modelosSeleccionados.length} de{" "}
+              {modelos.length} modelos seleccionados.
+            </p>
+          </section>
+
+          <SelectorVersiones
+            modelosSeleccionados={modelosSeleccionados}
+            versionesSeleccionadas={versionesSeleccionadas}
+            cambiarVersion={cambiarVersion}
+            experimentos={experimentos}
+          />
+
+          <section className="selector-modelos">
+            <h3>
+              Resultados de los modelos seleccionados
+            </h3>
+
+            <p>
+              Métricas registradas para las versiones
+              seleccionadas de cada arquitectura.
+            </p>
+
+            <div style={{ overflowX: "auto" }}>
+              <table className="comparison-table">
+                <thead>
+                  <tr>
+                    <th>Modelo</th>
+                    <th>Versión</th>
+                    <th>Accuracy</th>
+                    <th>Precisión</th>
+                    <th>Recall</th>
+                    <th>F1-score</th>
+                    <th>Dice</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {comparacionActual.map((modelo) => {
+                    const resultado = modelo.resultado;
+                    const metricas = resultado?.metricas;
+
+                    return (
+                      <tr key={modelo.id}>
+                        <td>{modelo.nombre}</td>
+
+                        <td>
+                          {resultado?.version ?? "—"}
+                        </td>
+
+                        <td>
+                          {porcentaje(metricas?.accuracy)}
+                        </td>
+
+                        <td>
+                          {porcentaje(metricas?.precision)}
+                        </td>
+
+                        <td>
+                          {porcentaje(metricas?.recall)}
+                        </td>
+
+                        <td>
+                          {porcentaje(metricas?.f1Score)}
+                        </td>
+
+                        <td>
+                          {porcentaje(metricas?.dice)}
+                        </td>
+
+                        <td>
+                          {resultado?.estado ?? "pendiente"}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {comparacionActual.length === 0 && (
+              <p>
+                Selecciona al menos un modelo para
+                consultar sus resultados.
+              </p>
+            )}
+          </section>
+
+          <GraficaComparacion
+            modelosSeleccionados={modelosSeleccionados}
+            versionesSeleccionadas={versionesSeleccionadas}
+            experimentos={experimentos}
+          />
+        </>
+      )}
+
+      {/* PESTAÑA 2: EXPERIMENTOS */}
+      {pestanaActiva === "experimentos" && (
+        <>
+          <HistorialExperimentos
+            experimentos={experimentos}
+          />
+
+          <DetalleExperimento
+            experimentos={experimentos}
+          />
+        </>
+      )}
+
+      {/* PESTAÑA 3: EVIDENCIAS */}
+      {pestanaActiva === "evidencias" && (
+        <EvidenciasExperimento
+          experimentos={experimentos}
+        />
+      )}
+
+      {/* PESTAÑA 4: GESTIÓN DE DATOS */}
+      {pestanaActiva === "datos" && (
+        <>
+          <ImportarResultados
+            onImportar={importarResultado}
+          />
+
+          <ExportarResultados
+            experimentos={experimentos}
+          />
+        </>
+      )}
+
+      {/* NOTA METODOLÓGICA */}
       <div className="comparison-footnote">
         <Info size={16} />
+
         <p>
-          La comparación definitiva deberá utilizar el mismo conjunto de
-          prueba, las mismas definiciones de métricas y condiciones
-          experimentales comparables para ambas arquitecturas.
+          Para realizar una comparación académica válida,
+          los modelos deben evaluarse con conjuntos de
+          prueba equivalentes, definiciones consistentes
+          de las métricas y condiciones experimentales
+          documentadas. Las métricas de segmentación y
+          clasificación deben interpretarse según la
+          tarea correspondiente.
         </p>
       </div>
     </div>

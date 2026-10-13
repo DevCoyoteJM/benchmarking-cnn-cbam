@@ -1,0 +1,9 @@
+{
+  "id": "unet-v2",
+  "modeloId": "unet",
+  "version": "2.0",
+  "fecha": null,
+  "estado": "pendiente",
+  "descripcion": "Registro de ejemplo para una nueva evaluación de U-Net.",
+  "metricas": {}
+}
