@@ -84,20 +84,21 @@ Este proyecto surge de la necesidad de verificar empíricamente mediante un benc
 
 ```mermaid
 flowchart LR
-    subgraph Entrada
+    subgraph sub_in ["Entrada"]
         TC["Parche TC Pulmonar (Canal Único)"]
     end
-    subgraph Mecanismo CBAM
+    subgraph sub_cbam ["Mecanismo CBAM"]
         MC["Atención de Canal: MLP Compartido (Avg + Max Pool)"]
         MS["Atención Espacial: Convolución 7x7 (Avg + Max Pool)"]
-        TC --> MC --> MS
     end
-    subgraph Salidas del Pipeline
+    subgraph sub_out ["Salidas del Pipeline"]
         E1_OUT["E1: Máscara Binaria de Segmentación"]
-        E2_OUT["E2: Probabilidad de Malignidad [0, 1]"]
-        MS --> E1_OUT
-        MS --> E2_OUT
+        E2_OUT["E2: Probabilidad de Malignidad (0 a 1)"]
     end
+    TC --> MC
+    MC --> MS
+    MS --> E1_OUT
+    MS --> E2_OUT
 ```
 
 - **U-Net:** Red tipo *encoder-decoder* simétrica con conexiones directas (*skip connections*) que transfieren mapas de alta resolución desde la fase de contracción hacia la de expansión, preservando bordes y contexto espacial fino.
@@ -109,19 +110,27 @@ flowchart LR
 
 ```mermaid
 flowchart TD
-    subgraph Dataset LIDC-IDRI
-        DICOM["1,018 Casos de TC de Tórax (TCIA)"] --> PRE["Ventana Pulmonar [-1000, 400] HU y Normalización"]
+    subgraph sub_dataset ["Dataset LIDC-IDRI"]
+        DICOM["1,018 Casos de TC de Tórax (TCIA)"]
+        PRE["Ventana Pulmonar (-1000 a 400 HU) y Normalización"]
+        DICOM --> PRE
     end
-    subgraph Etapa 1: Segmentación (E1)
-        PRE --> E1["E1: Segmentación Nodular"]
-        E1 --> E1_MET["Evaluación sobre Test (N = 762 parches 2D)"]
-        E1_MET --> E1_RES["Métricas: Dice, IoU, HD95, F1-Nodular"]
+    subgraph sub_e1 ["Etapa 1: Segmentación (E1)"]
+        E1["E1: Segmentación Nodular"]
+        E1_MET["Evaluación sobre Test (N = 762 parches 2D)"]
+        E1_RES["Métricas: Dice, IoU, HD95, F1-Nodular"]
+        E1 --> E1_MET
+        E1_MET --> E1_RES
     end
-    subgraph Etapa 2: Clasificación de Malignidad (E2)
-        PRE --> E2["E2: Clasificación de Malignidad"]
-        E2 --> E2_MET["Evaluación sobre Test (N = 213 nódulos)"]
-        E2_MET --> E2_RES["Métricas: Accuracy, Sensibilidad, Especificidad, MCC, AUC"]
+    subgraph sub_e2 ["Etapa 2: Clasificación de Malignidad (E2)"]
+        E2["E2: Clasificación de Malignidad"]
+        E2_MET["Evaluación sobre Test (N = 213 nódulos)"]
+        E2_RES["Métricas: Accuracy, Sensibilidad, Especificidad, MCC, AUC"]
+        E2 --> E2_MET
+        E2_MET --> E2_RES
     end
+    PRE --> E1
+    PRE --> E2
 ```
 
 1. **Etapa 1 (E1 — Segmentación de Lesiones):**
@@ -224,19 +233,27 @@ Para garantizar la reproducibilidad y el análisis detallado de los hallazgos, s
 
 ```mermaid
 flowchart TD
-    subgraph Arquitectura de PulmoVision AI
+    subgraph sub_ui ["Arquitectura de PulmoVision AI"]
         UI["Interfaz Web (React 19 + TypeScript + Vite)"]
-        UI --> DSH["Dashboard Principal"]
-        UI --> CMP["Comparación Multimodelo"]
-        UI --> EXP["Historial y Replicación"]
-        UI --> EVI["Galería de Evidencias y Visor"]
-        UI --> CBM["Visualizador de Atención CBAM"]
-        UI --> SCI["Interpretación Científica (/interpretacion)"]
+        DSH["Dashboard Principal"]
+        CMP["Comparación Multimodelo"]
+        EXP["Historial y Replicación"]
+        EVI["Galería de Evidencias y Visor"]
+        CBM["Visualizador de Atención CBAM"]
+        SCI["Interpretación Científica (/interpretacion)"]
+        UI --> DSH
+        UI --> CMP
+        UI --> EXP
+        UI --> EVI
+        UI --> CBM
+        UI --> SCI
     end
-    subgraph Almacenamiento Local
-        SCI --> IDB["IndexedDB: Notebooks e Historiales JSON"]
-        SCI --> LS["localStorage: Metadatos de Sesión"]
+    subgraph sub_storage ["Almacenamiento Local"]
+        IDB["IndexedDB: Notebooks e Historiales JSON"]
+        LS["localStorage: Metadatos de Sesión"]
     end
+    SCI --> IDB
+    SCI --> LS
 ```
 
 ### 6.1 Módulos Funcionales
