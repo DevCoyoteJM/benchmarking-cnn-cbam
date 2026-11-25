@@ -1,14 +1,20 @@
 import { useState } from "react";
 import { modelos } from "../data/modelos";
-//import { historialResultados } from "../data/resultados";
 import type { ResultadoModelo } from "../data/resultados";
+import type { RegistroHistorialEntrenamiento } from "../data/historialEntrenamiento";
+import {
+  obtenerInfoHistorialExperimento,
+  formatearFecha,
+} from "../utils/graficaUtils";
 
 interface HistorialExperimentosProps {
   experimentos: ResultadoModelo[];
+  historiales?: RegistroHistorialEntrenamiento[];
 }
 
 export default function HistorialExperimentos({
   experimentos,
+  historiales = [],
 }: HistorialExperimentosProps) {
   const [modeloSeleccionado, setModeloSeleccionado] =
     useState("todos");
@@ -25,7 +31,7 @@ export default function HistorialExperimentos({
 
       <p>
         Consulta las versiones registradas de cada
-        arquitectura y su estado de evaluación.
+        arquitectura, su fecha de importación en IndexedDB y su estado de evaluación.
       </p>
 
       <div className="historial-filtros">
@@ -58,7 +64,8 @@ export default function HistorialExperimentos({
             <tr>
               <th>Modelo</th>
               <th>Versión</th>
-              <th>Fecha</th>
+              <th>Fecha de entrenamiento</th>
+              <th>Fecha de importación</th>
               <th>Estado</th>
               <th>Descripción</th>
             </tr>
@@ -71,21 +78,44 @@ export default function HistorialExperimentos({
                   item.id === experimento.modeloId
               );
 
+              const historial = historiales.find(
+                (h) => h.modeloId === experimento.modeloId
+              );
+
+              const info = obtenerInfoHistorialExperimento(historial);
+
               return (
                 <tr key={experimento.id}>
                   <td>
-                    {modelo?.nombre ??
-                      experimento.modeloId}
+                    <strong>
+                      {modelo?.nombre ?? experimento.modeloId}
+                    </strong>
                   </td>
 
                   <td>{experimento.version}</td>
 
                   <td>
-                    {experimento.fecha ?? "Sin registrar"}
+                    {experimento.fecha
+                      ? formatearFecha(experimento.fecha)
+                      : "Sin registrar"}
                   </td>
 
                   <td>
-                    {experimento.estado}
+                    {info.fechaImportacion
+                      ? formatearFecha(info.fechaImportacion)
+                      : "Sin importar"}
+                  </td>
+
+                  <td>
+                    <span
+                      className={`badge-estado ${
+                        info.tieneHistorial
+                          ? "badge-con-historial"
+                          : "badge-pendiente"
+                      }`}
+                    >
+                      {info.estadoCalculado}
+                    </span>
                   </td>
 
                   <td>{experimento.descripcion}</td>

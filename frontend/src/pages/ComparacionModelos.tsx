@@ -1,12 +1,23 @@
-
-import { FlaskConical, Info } from "lucide-react";
-import { useEffect, useState } from "react";
+import { FlaskConical, Info, ShieldAlert } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 import { modelos } from "../data/modelos";
+import { useExperimentos } from "../hooks/useExperimentos";
+import { useHistorialesEntrenamiento } from "../hooks/useHistorialesEntrenamiento";
+import { obtenerResultadoSeleccionado } from "../utils/modelSelectors";
+import ImportarHistorialEntrenamiento from "../components/ImportarHistorialEntrenamiento";
+import type { Evidencia } from "../services/storage/storageTypes";
 import {
-  historialResultados,
-  type ResultadoModelo,
-} from "../data/resultados";
+  consultarEvidencias,
+  asegurarEvidenciasCompartidas,
+} from "../services/storage/indexedDBService";
+import {
+  obtenerResumenE1,
+  obtenerResumenE2,
+  formatearMetrica,
+  formatearPerdida,
+} from "../utils/graficaUtils";
 
 import GraficaComparacion from "../components/GraficaComparacion";
 import HistorialExperimentos from "../components/HistorialExperimentos";
@@ -15,118 +26,79 @@ import ImportarResultados from "../components/ImportarResultados";
 import ExportarResultados from "../components/ExportarResultados";
 import DetalleExperimento from "../components/DetalleExperimento";
 import EvidenciasExperimento from "../components/EvidenciasExperimento";
-
-type PestanaComparacion =
-  | "comparacion"
-  | "experimentos"
-  | "evidencias"
-  | "datos";
-
-const CLAVE_ALMACENAMIENTO = "pulmovision_experimentos";
+import {
+  esPestanaValida,
+  type PestanaComparacion,
+} from "../utils/navigation";
 
 export default function ComparacionModelos() {
-  // Pestaña activa
-  const [pestanaActiva, setPestanaActiva] =
-    useState<PestanaComparacion>("comparacion");
+  // Pestaña activa sincronizada con searchParams (?tab=...)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pestanaParam = searchParams.get("tab");
+  const pestanaActiva: PestanaComparacion = esPestanaValida(pestanaParam)
+    ? pestanaParam
+    : "comparacion";
 
-  // Modelos seleccionados para comparar
+  const cambiarPestana = (nuevaPestana: PestanaComparacion) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (nuevaPestana === "comparacion") {
+          next.delete("tab");
+        } else {
+          next.set("tab", nuevaPestana);
+        }
+        return next;
+      },
+      { replace: true }
+    );
+  };
+
+  // Modelos seleccionados para comparar (por defecto el catálogo completo de 4 arquitecturas)
   const [modelosSeleccionados, setModelosSeleccionados] =
-    useState<string[]>(["unet", "unet-cbam"]);
+    useState<string[]>(["unet", "unet-cbam", "modcbam", "transunet"]);
 
   // Versión seleccionada de cada modelo
   const [versionesSeleccionadas, setVersionesSeleccionadas] =
     useState<Record<string, string>>({});
 
-  // Recuperar experimentos almacenados en el navegador
-  const [experimentos, setExperimentos] =
-    useState<ResultadoModelo[]>(() => {
-      try {
-        const guardados = localStorage.getItem(
-          CLAVE_ALMACENAMIENTO
-        );
+  // Historiales de entrenamiento persistidos en IndexedDB
+  const {
+    historiales: historialesEntrenamiento,
+    guardarHistorial,
+    eliminarHistorial,
+  } = useHistorialesEntrenamiento();
 
-        if (guardados) {
-          const datos: unknown = JSON.parse(guardados);
+  // Experimentos gestionados centralizadamente por el hook (localStorage + normalización)
+  const {
+    experimentos,
+    importarResultados,
+    actualizarExperimento,
+    actualizarMultiplesExperimentos,
+  } = useExperimentos();
 
-          if (
-            Array.isArray(datos) &&
-            datos.every((item) => {
-              if (
-                item === null ||
-                typeof item !== "object" ||
-                Array.isArray(item)
-              ) {
-                return false;
-              }
+  // Evidencias compartidas e individuales persistidas en IndexedDB
+  const [evidencias, setEvidencias] = useState<Evidencia[]>([]);
 
-              const registro = item as Record<string, unknown>;
-
-              return (
-                typeof registro.id === "string" &&
-                typeof registro.modeloId === "string" &&
-                typeof registro.version === "string" &&
-                typeof registro.descripcion === "string" &&
-                (registro.fecha === null ||
-                  typeof registro.fecha === "string") &&
-                ["pendiente", "parcial", "finalizado"].includes(
-                  String(registro.estado)
-                ) &&
-                registro.metricas !== null &&
-                typeof registro.metricas === "object" &&
-                !Array.isArray(registro.metricas)
-              );
-            })
-          ) {
-            return datos as ResultadoModelo[];
-          }
-        }
-      } catch (error) {
-        console.error(
-          "No se pudieron recuperar los experimentos:",
-          error
-        );
-      }
-
-      return [...historialResultados];
-    });
-
-  // Guardar automáticamente los experimentos
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        CLAVE_ALMACENAMIENTO,
-        JSON.stringify(experimentos)
-      );
-    } catch (error) {
-      console.error(
-        "No se pudieron guardar los experimentos:",
-        error
-      );
-    }
-  }, [experimentos]);
+    let activo = true;
 
-  // Importar uno o varios resultados
-  const importarResultado = (
-    nuevosResultados: ResultadoModelo[]
-  ) => {
-    setExperimentos((actuales) => {
-      const actualizados = [...actuales];
-
-      nuevosResultados.forEach((nuevo) => {
-        const indice = actualizados.findIndex(
-          (resultado) => resultado.id === nuevo.id
-        );
-
-        if (indice >= 0) {
-          actualizados[indice] = nuevo;
-        } else {
-          actualizados.push(nuevo);
+    asegurarEvidenciasCompartidas()
+      .catch(() => {})
+      .then(() => consultarEvidencias())
+      .then((datos) => {
+        if (activo) {
+          setEvidencias(datos);
         }
+      })
+      .catch((err) => {
+        console.error("Error al consultar evidencias en Comparación:", err);
       });
 
-      return actualizados;
-    });
-  };
+    return () => {
+      activo = false;
+    };
+  }, [pestanaActiva]);
 
   // Activar o desactivar un modelo
   const cambiarSeleccion = (id: string) => {
@@ -148,22 +120,6 @@ export default function ComparacionModelos() {
     }));
   };
 
-  // Obtener la versión seleccionada o la última registrada
-  const obtenerResultadoSeleccionado = (modeloId: string) => {
-    const versiones = experimentos.filter(
-      (resultado) => resultado.modeloId === modeloId
-    );
-
-    const idSeleccionado =
-      versionesSeleccionadas[modeloId];
-
-    return (
-      versiones.find(
-        (version) => version.id === idSeleccionado
-      ) ?? versiones[versiones.length - 1]
-    );
-  };
-
   // Construir la comparación dinámica
   const comparacionActual = modelos
     .filter((modelo) =>
@@ -171,17 +127,27 @@ export default function ComparacionModelos() {
     )
     .map((modelo) => ({
       ...modelo,
-      resultado: obtenerResultadoSeleccionado(modelo.id),
+      resultado: obtenerResultadoSeleccionado(
+        modelo.id,
+        versionesSeleccionadas,
+        experimentos
+      ),
     }));
 
-  // Convertir una métrica de 0-1 a porcentaje
-  const porcentaje = (valor?: number) => {
-    if (valor === undefined || !Number.isFinite(valor)) {
-      return "—";
-    }
+  // Resúmenes metodológicos por etapa (E1 y E2) derivados de los datos experimentales reales
+  const datosResumenE1 = comparacionActual.map((item) => {
+    const historial = historialesEntrenamiento.find(
+      (h) => h.modeloId === item.id
+    );
+    return obtenerResumenE1(item.id, item.nombre, historial, item.resultado);
+  });
 
-    return `${(valor * 100).toFixed(2)}%`;
-  };
+  const datosResumenE2 = comparacionActual.map((item) => {
+    const historial = historialesEntrenamiento.find(
+      (h) => h.modeloId === item.id
+    );
+    return obtenerResumenE2(item.id, item.nombre, historial, item.resultado);
+  });
 
   return (
     <div className="comparison-page">
@@ -237,7 +203,7 @@ export default function ComparacionModelos() {
           aria-current={
             pestanaActiva === "comparacion" ? "page" : undefined
           }
-          onClick={() => setPestanaActiva("comparacion")}
+          onClick={() => cambiarPestana("comparacion")}
         >
           Comparación
         </button>
@@ -250,7 +216,7 @@ export default function ComparacionModelos() {
           aria-current={
             pestanaActiva === "experimentos" ? "page" : undefined
           }
-          onClick={() => setPestanaActiva("experimentos")}
+          onClick={() => cambiarPestana("experimentos")}
         >
           Experimentos
         </button>
@@ -263,7 +229,7 @@ export default function ComparacionModelos() {
           aria-current={
             pestanaActiva === "evidencias" ? "page" : undefined
           }
-          onClick={() => setPestanaActiva("evidencias")}
+          onClick={() => cambiarPestana("evidencias")}
         >
           Evidencias
         </button>
@@ -276,7 +242,7 @@ export default function ComparacionModelos() {
           aria-current={
             pestanaActiva === "datos" ? "page" : undefined
           }
-          onClick={() => setPestanaActiva("datos")}
+          onClick={() => cambiarPestana("datos")}
         >
           Gestión de datos
         </button>
@@ -330,86 +296,143 @@ export default function ComparacionModelos() {
             experimentos={experimentos}
           />
 
+          {/* TABLAS METODOLÓGICAS SEPARADAS PARA E1 Y E2 */}
           <section className="selector-modelos">
-            <h3>
-              Resultados de los modelos seleccionados
-            </h3>
-
+            <h3>Evaluación experimental por etapas del pipeline</h3>
             <p>
-              Métricas registradas para las versiones
-              seleccionadas de cada arquitectura.
+              Presentación metodológica diferenciada entre la etapa de detección y segmentación nodular (E1) y la etapa de clasificación diagnóstica de malignidad (E2).
             </p>
 
-            <div style={{ overflowX: "auto" }}>
-              <table className="comparison-table">
-                <thead>
-                  <tr>
-                    <th>Modelo</th>
-                    <th>Versión</th>
-                    <th>Accuracy</th>
-                    <th>Precisión</th>
-                    <th>Recall</th>
-                    <th>F1-score</th>
-                    <th>Dice</th>
-                    <th>Estado</th>
-                  </tr>
-                </thead>
+            {comparacionActual.length === 0 ? (
+              <p>Selecciona al menos un modelo para consultar sus resultados.</p>
+            ) : (
+              <>
+                {/* TABLA ETAPA E1: SEGMENTACIÓN */}
+                <div className="tabla-etapa-contenedor">
+                  <div className="tabla-etapa-header">
+                    <div>
+                      <h4>Etapa E1: Segmentación y Detección de Nódulos (Dataset LIDC-IDRI)</h4>
+                      <p>
+                        Métricas de solapamiento espacial sobre máscaras binarias de consenso multiexperto. Métricas principales: Coeficiente Dice e IoU (Jaccard).
+                      </p>
+                    </div>
+                    <span className="badge-etapa badge-e1">ETAPA E1</span>
+                  </div>
 
-                <tbody>
-                  {comparacionActual.map((modelo) => {
-                    const resultado = modelo.resultado;
-                    const metricas = resultado?.metricas;
+                  <div style={{ overflowX: "auto" }}>
+                    <table className="comparison-table">
+                      <thead>
+                        <tr>
+                          <th>Arquitectura</th>
+                          <th>Épocas E1</th>
+                          <th>Mejor Dice (Val)</th>
+                          <th>Dice Final (Val)</th>
+                          <th>IoU</th>
+                          <th>Pérdida Final (Train / Val)</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {datosResumenE1.map((d) => (
+                          <tr key={d.modeloId}>
+                            <td><strong>{d.nombreModelo}</strong></td>
+                            <td>{d.epocas ? `${d.epocas} épocas` : "No disponible"}</td>
+                            <td>{formatearMetrica(d.mejorValDice, { porcentaje: true })}</td>
+                            <td>{formatearMetrica(d.valDiceFinal, { porcentaje: true })}</td>
+                            <td>{formatearMetrica(d.iou, { porcentaje: true })}</td>
+                            <td>{formatearPerdida(d.trainLossFinal, d.valLossFinal)}</td>
+                            <td><span className="badge-estado">{d.estado}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-                    return (
-                      <tr key={modelo.id}>
-                        <td>{modelo.nombre}</td>
+                {/* TABLA ETAPA E2: CLASIFICACIÓN DE MALIGNIDAD */}
+                <div className="tabla-etapa-contenedor">
+                  <div className="tabla-etapa-header">
+                    <div>
+                      <h4>Etapa E2: Clasificación de Malignidad (Benigno vs. Maligno)</h4>
+                      <p>
+                        Métricas de evaluación de discriminación nodular. Todas las arquitecturas completaron 100 épocas. El Coeficiente MCC y F1-score ponderan robustamente el desbalance de clases.
+                      </p>
+                    </div>
+                    <span className="badge-etapa badge-e2">ETAPA E2</span>
+                  </div>
 
-                        <td>
-                          {resultado?.version ?? "—"}
-                        </td>
+                  <div style={{ overflowX: "auto" }}>
+                    <table className="comparison-table">
+                      <thead>
+                        <tr>
+                          <th>Arquitectura</th>
+                          <th>Épocas E2</th>
+                          <th>Mejor MCC (Val)</th>
+                          <th>MCC Final (Val)</th>
+                          <th>Mejor F1 (Val)</th>
+                          <th>F1 Final (Val)</th>
+                          <th>Accuracy</th>
+                          <th>ROC-AUC</th>
+                          <th>Pérdida Final (Train / Val)</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {datosResumenE2.map((d) => (
+                          <tr key={d.modeloId}>
+                            <td><strong>{d.nombreModelo}</strong></td>
+                            <td>{d.epocas ? `${d.epocas} épocas` : "No disponible"}</td>
+                            <td>{formatearMetrica(d.mejorValMcc, { decimales: 4 })}</td>
+                            <td>{formatearMetrica(d.valMccFinal, { decimales: 4 })}</td>
+                            <td>{formatearMetrica(d.mejorValF1, { porcentaje: true })}</td>
+                            <td>{formatearMetrica(d.valF1Final, { porcentaje: true })}</td>
+                            <td>{formatearMetrica(d.accuracy, { porcentaje: true })}</td>
+                            <td>{formatearMetrica(d.rocAuc, { porcentaje: true })}</td>
+                            <td>{formatearPerdida(d.trainLossFinal, d.valLossFinal)}</td>
+                            <td><span className="badge-estado">{d.estado}</span></td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-                        <td>
-                          {porcentaje(metricas?.accuracy)}
-                        </td>
-
-                        <td>
-                          {porcentaje(metricas?.precision)}
-                        </td>
-
-                        <td>
-                          {porcentaje(metricas?.recall)}
-                        </td>
-
-                        <td>
-                          {porcentaje(metricas?.f1Score)}
-                        </td>
-
-                        <td>
-                          {porcentaje(metricas?.dice)}
-                        </td>
-
-                        <td>
-                          {resultado?.estado ?? "pendiente"}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {comparacionActual.length === 0 && (
-              <p>
-                Selecciona al menos un modelo para
-                consultar sus resultados.
-              </p>
+                {/* NOTA METODOLÓGICA Y CRITERIOS DE COMPARABILIDAD */}
+                <div className="comparison-scientific-card">
+                  <div className="scientific-card-header">
+                    <ShieldAlert size={18} color="#4f46e5" />
+                    <strong>Criterios Metodológicos y de Comparabilidad (Trabajo de Grado)</strong>
+                  </div>
+                  <ul className="scientific-card-list">
+                    <li>
+                      <strong>Separación estricta de tareas:</strong> Las métricas de solapamiento espacial (Dice / IoU) evalúan la calidad de segmentación en E1 y no se extrapolan a la clasificación de patología (MCC / F1 / ROC-AUC) de E2.
+                    </li>
+                    <li>
+                      <strong>Heterogeneidad de épocas en E1:</strong> En la etapa E1, las arquitecturas registraron diferentes duraciones de entrenamiento (48 épocas en U-Net+CBAM frente a 106 en TransUNet). Esta disparidad debe considerarse al contrastar convergencias, evitando atribuir diferencias de pérdida exclusivamente a la capacidad del modelo sin contemplar la parada temprana.
+                    </li>
+                    <li>
+                      <strong>Régimen homogéneo en E2:</strong> En la clasificación de malignidad (E2), los cuatro modelos completaron exactamente 100 épocas bajo condiciones homogéneas. Los mecanismos de atención (ModCBAM y U-Net+CBAM) alcanzaron picos superiores de MCC y F1 frente a la U-Net base.
+                    </li>
+                    <li>
+                      <strong>Transparencia de datos:</strong> Las métricas no computadas en el pipeline experimental se presentan explícitamente como «No disponible», rechazando cualquier relleno con ceros ficticios.
+                    </li>
+                  </ul>
+                </div>
+              </>
             )}
           </section>
+
+          <ImportarHistorialEntrenamiento
+            historiales={historialesEntrenamiento}
+            onImportar={guardarHistorial}
+            onEliminar={eliminarHistorial}
+          />
 
           <GraficaComparacion
             modelosSeleccionados={modelosSeleccionados}
             versionesSeleccionadas={versionesSeleccionadas}
             experimentos={experimentos}
+            historialesEntrenamiento={historialesEntrenamiento}
           />
         </>
       )}
@@ -419,10 +442,15 @@ export default function ComparacionModelos() {
         <>
           <HistorialExperimentos
             experimentos={experimentos}
+            historiales={historialesEntrenamiento}
           />
 
           <DetalleExperimento
             experimentos={experimentos}
+            historiales={historialesEntrenamiento}
+            evidencias={evidencias}
+            onActualizarExperimento={actualizarExperimento}
+            onActualizarMultiplesExperimentos={actualizarMultiplesExperimentos}
           />
         </>
       )}
@@ -438,7 +466,7 @@ export default function ComparacionModelos() {
       {pestanaActiva === "datos" && (
         <>
           <ImportarResultados
-            onImportar={importarResultado}
+            onImportar={importarResultados}
           />
 
           <ExportarResultados

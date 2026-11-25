@@ -1,0 +1,2260 @@
+/* Estilos del Módulo de Interpretación Científica - PulmoVision AI */
+
+.interpretacion-page {
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 30px 40px 48px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* CABECERA PRINCIPAL */
+.interpretacion-header {
+  margin-bottom: 24px;
+}
+
+.interpretacion-header h2 {
+  font: 800 28px "Manrope", sans-serif;
+  letter-spacing: -0.8px;
+  margin: 10px 0 8px;
+  color: #20263a;
+}
+
+.interpretacion-header-desc {
+  color: #6c758d;
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 980px;
+  margin: 0 0 18px;
+}
+
+/* RESUMEN INTRODUCTORIO DE LAS DOS ETAPAS EXPERIMENTALES */
+.intro-etapas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.intro-etapa-card {
+  background: #ffffff;
+  border: 1px solid #e7ebf3;
+  border-radius: 14px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(32, 38, 58, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.intro-etapa-card.card-e1 {
+  border-top: 4px solid #6654d9;
+}
+
+.intro-etapa-card.card-e2 {
+  border-top: 4px solid #25a984;
+}
+
+.intro-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.intro-card-titulo {
+  font: 700 15px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0;
+}
+
+.intro-card-desc {
+  font-size: 12px;
+  line-height: 1.65;
+  color: #656f87;
+  margin: 0 0 14px;
+}
+
+.intro-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed #eef1f6;
+  font-size: 11px;
+  color: #7b849b;
+}
+
+.intro-card-meta strong {
+  color: #2c3349;
+}
+
+/* NAVEGACIÓN POR PESTAÑAS DEL MÓDULO */
+.interpretacion-tabs-nav {
+  display: flex;
+  gap: 10px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e7ebf3;
+  margin-bottom: 24px;
+  overflow-x: auto;
+}
+
+.btn-tab-interp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: #ffffff;
+  border: 1px solid #e4e8f1;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #677189;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-tab-interp:hover {
+  background: #f7f6ff;
+  color: #6654d9;
+  border-color: #dcd6fa;
+}
+
+.btn-tab-interp.activo {
+  background: #6654d9;
+  color: #ffffff;
+  border-color: #6654d9;
+  box-shadow: 0 4px 12px rgba(102, 84, 217, 0.22);
+}
+
+.btn-tab-interp.tab-deshabilitado {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #fbfbfd;
+  color: #a4acbf;
+}
+
+.badge-tag-proximamente {
+  font-size: 9px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #f0f2f7;
+  color: #8c95aa;
+}
+
+/* BANNER DE CONTEXTO MUESTRAL */
+.banner-contexto-muestral {
+  background: linear-gradient(135deg, #ffffff 0%, #f9f8ff 100%);
+  border: 1px solid #e4e2fa;
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+
+.banner-contexto-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.banner-titulo-grupo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.banner-titulo-grupo h3 {
+  margin: 0;
+  font: 700 16px "Manrope", sans-serif;
+  color: #20263a;
+}
+
+.badge-etapa-etiqueta {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #eeebff;
+  color: #6654d9;
+  text-transform: uppercase;
+}
+
+.badge-etapa-etiqueta.etapa-e2-tag {
+  background: #e5f8f2;
+  color: #1e9b77;
+}
+
+.banner-contexto-descripcion {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #606a82;
+  margin: 0;
+}
+
+/* BADGES DE PROCEDENCIA */
+.badge-procedencia {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.badge-test {
+  background: #e9f8f3;
+  color: #168a68;
+  border: 1px solid #c8efe1;
+}
+
+.dot-test {
+  background: #25a984;
+}
+
+.badge-val {
+  background: #fff8ec;
+  color: #b07010;
+  border: 1px solid #fae6c3;
+}
+
+.dot-val {
+  background: #d48b1d;
+}
+
+.badge-train {
+  background: #f1f3f8;
+  color: #657088;
+  border: 1px solid #e0e4ed;
+}
+
+.dot-train {
+  background: #8b95ac;
+}
+
+.badge-ref-3d {
+  background: #f0edff;
+  color: #5d49cf;
+  border: 1px solid #ded8fa;
+}
+
+.dot-ref-3d {
+  background: #6654d9;
+}
+
+/* TARJETAS DE MÉTRICAS */
+.metricas-resumen-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.tarjeta-metrica-interp {
+  background: #ffffff;
+  border: 1px solid #e7ebf3;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tarjeta-metrica-interp:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(32, 38, 58, 0.05);
+}
+
+.tarjeta-metrica-interp.tarjeta-optimo {
+  border-color: #cfdcf4;
+  background: linear-gradient(180deg, #ffffff 0%, #fafdff 100%);
+}
+
+.tarjeta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tarjeta-arq-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #384158;
+}
+
+.tarjeta-titulo-metrica {
+  font-size: 11px;
+  color: #7b859c;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.tarjeta-valor-fila {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.tarjeta-valor-num {
+  font: 800 24px "Manrope", sans-serif;
+  letter-spacing: -0.6px;
+  color: #20263a;
+}
+
+.tarjeta-valor-num.valor-ausente {
+  font-size: 16px;
+  color: #9aa2b5;
+  font-weight: 600;
+}
+
+.badge-lider-2d {
+  font-size: 9px;
+  font-weight: 700;
+  background: #eef1fc;
+  color: #3a5ec7;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+.tarjeta-etapa-etiqueta {
+  font-size: 9px;
+  color: #9aa2b5;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.tarjeta-pie {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #eff1f6;
+}
+
+.tarjeta-descripcion-texto {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #7b849a;
+  margin: 0;
+}
+
+/* TABLA COMPARATIVA */
+.bloque-tabla-comparativa {
+  background: #ffffff;
+  border: 1px solid #e7ebf3;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(32, 38, 58, 0.02);
+}
+
+.tabla-encabezado-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tabla-titulo {
+  font: 700 16px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 4px;
+}
+
+.tabla-subtitulo {
+  font-size: 11px;
+  color: #7e879f;
+  margin: 0;
+}
+
+.etiqueta-origen-test {
+  font-size: 10px;
+  font-weight: 700;
+  color: #1e8767;
+  background: #e8f7f1;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.contenedor-tabla-responsive {
+  overflow-x: auto;
+}
+
+.tabla-cientifica-comparativa {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+.tabla-cientifica-comparativa th {
+  background: #f7f8fb;
+  color: #636e86;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e9f2;
+  white-space: nowrap;
+}
+
+.tabla-cientifica-comparativa td {
+  padding: 13px 14px;
+  border-bottom: 1px solid #eef1f6;
+  color: #384159;
+}
+
+.tabla-cientifica-comparativa tr:last-child td {
+  border-bottom: none;
+}
+
+.celda-modelo-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subtexto-modelo {
+  display: block;
+  font-size: 10px;
+  color: #8c95ac;
+  font-weight: normal;
+}
+
+.col-metrica {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.celda-lider {
+  background: #f5f8ff;
+  color: #2b55c6;
+  font-weight: 700;
+}
+
+.marca-lider {
+  color: #2b55c6;
+  font-size: 11px;
+  margin-left: 4px;
+}
+
+.tag-epocas {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5c667f;
+  background: #f0f2f7;
+  padding: 3px 7px;
+  border-radius: 5px;
+}
+
+.fila-referencia-3d {
+  background: #faf9ff;
+  border-top: 2px dashed #ded8fa;
+}
+
+/* BLOQUE SEGREGADO PARA REFERENCIA EXTERNA 3D */
+.bloque-referencia-externa-3d {
+  margin-top: 18px;
+  padding: 16px 20px;
+  background: #fbfaff;
+  border: 1px solid #dcd5f7;
+  border-left: 4px solid #6654d9;
+  border-radius: 10px;
+}
+
+.referencia-externa-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.referencia-externa-titulo-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.referencia-externa-titulo-fila h5 {
+  font: 700 13px "Manrope", sans-serif;
+  color: #3b2f80;
+  margin: 0;
+}
+
+.aviso-falta-comparabilidad {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #555079;
+  margin-bottom: 12px;
+}
+
+.referencia-externa-metricas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding-top: 10px;
+  border-top: 1px dashed #ded8fa;
+}
+
+.ref-metrica-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.ref-metrica-label {
+  color: #6d6694;
+}
+
+.ref-metrica-item strong {
+  color: #241c59;
+  font-weight: 700;
+}
+
+.nota-pie-tabla {
+  font-size: 11px;
+  color: #868ea3;
+  margin: 14px 0 0;
+  line-height: 1.6;
+}
+
+/* GRÁFICA DE BARRAS DE RENDIMIENTO */
+.bloque-grafica-comparativa {
+  background: #ffffff;
+  border: 1px solid #e7ebf3;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 28px;
+}
+
+.grafica-titulo {
+  font: 700 15px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 16px;
+}
+
+.grafica-barras-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.grafica-fila-modelo {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.grafica-modelo-nombre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2c3349;
+}
+
+.grafica-barras-grupo {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.barra-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.barra-label-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #747d94;
+  font-weight: 600;
+}
+
+.barra-pista {
+  height: 8px;
+  background: #eef1f7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barra-progreso {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.barra-progreso.opacidad-media {
+  opacity: 0.75;
+}
+
+.barra-progreso.opacidad-suave {
+  opacity: 0.55;
+}
+
+/* MATRICES DE CONFUSIÓN */
+.bloque-matrices-confusion {
+  background: #ffffff;
+  border: 1px solid #e7ebf3;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 28px;
+}
+
+.matrices-encabezado {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.matrices-titulo {
+  font: 700 16px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 4px;
+}
+
+.matrices-subtitulo {
+  font-size: 11px;
+  color: #7d869d;
+  margin: 0;
+}
+
+.selector-modelo-matriz-tabs {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-tab-matriz {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  background: #f7f8fb;
+  border: 1px solid #e3e7f0;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #636d85;
+  transition: all 0.2s ease;
+}
+
+.btn-tab-matriz.activo {
+  background: #252b41;
+  color: #ffffff;
+  border-color: #252b41;
+}
+
+.matriz-grid-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 24px;
+  align-items: center;
+}
+
+.matriz-visual-2x2 {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.matriz-header-top {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  font-size: 10px;
+  font-weight: 700;
+  color: #7d879e;
+  text-align: center;
+}
+
+.matriz-header-top span:first-child {
+  grid-column: 2;
+}
+
+.matriz-fila-datos {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  gap: 6px;
+  align-items: center;
+}
+
+.matriz-header-left {
+  font-size: 10px;
+  font-weight: 700;
+  color: #7d879e;
+}
+
+.celda-cm {
+  padding: 14px 10px;
+  border-radius: 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  transition: transform 0.15s ease;
+}
+
+.celda-cm:hover {
+  transform: scale(1.02);
+}
+
+.cm-etiqueta {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.cm-valor {
+  font: 800 18px "Manrope", sans-serif;
+}
+
+.cm-tasa {
+  font-size: 9px;
+  opacity: 0.8;
+}
+
+.celda-tn {
+  background: #eef8f4;
+  color: #17805f;
+  border: 1px solid #d0efe2;
+}
+
+.celda-tp {
+  background: #eef4fe;
+  color: #235ec8;
+  border: 1px solid #d4e4fd;
+}
+
+.celda-fn {
+  background: #fff1f0;
+  color: #c9362a;
+  border: 1px solid #fad2cf;
+}
+
+.celda-fp {
+  background: #fff8eb;
+  color: #a86c0c;
+  border: 1px solid #fae6c2;
+}
+
+.matriz-explicacion-col h5 {
+  font: 700 14px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 12px;
+}
+
+.matriz-metricas-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.matriz-metricas-lista li {
+  display: flex;
+  justify-content: space-between;
+  color: #636e86;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #eff1f6;
+}
+
+.matriz-metricas-lista li.item-alerta-fn {
+  color: #ba2f23;
+  font-weight: 700;
+}
+
+.alerta-valor-fn {
+  color: #ba2f23;
+}
+
+.matriz-veredicto-caja {
+  background: #f7f8fb;
+  border-left: 3px solid #6654d9;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #4b546b;
+}
+
+.matriz-veredicto-caja p {
+  margin: 0;
+}
+
+/* BLOQUE DE INTERPRETACIÓN CUALITATIVA */
+.bloque-interpretacion-cualitativa {
+  background: #fbfbff;
+  border: 1px solid #e7e4fb;
+  border-radius: 14px;
+  padding: 22px;
+  margin-bottom: 24px;
+}
+
+.interpretacion-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.icono-interpretacion {
+  color: #6654d9;
+}
+
+.interpretacion-encabezado h4 {
+  font: 700 15px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0;
+}
+
+.interpretacion-cuerpo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.columna-interpretacion h5 {
+  font: 700 13px "Manrope", sans-serif;
+  color: #38415a;
+  margin: 0 0 8px;
+}
+
+.columna-interpretacion p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #636d85;
+  margin: 0 0 10px;
+}
+
+.columna-interpretacion p:last-child {
+  margin-bottom: 0;
+}
+
+/* CAJA DE AVISO CIENTÍFICO */
+.aviso-cientifico-box {
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.aviso-informativa {
+  background: #f4fbf9;
+  border: 1px solid #d3ece3;
+}
+
+.aviso-moderada {
+  background: #fffbf2;
+  border: 1px solid #fce8c0;
+}
+
+.aviso-critica {
+  background: #fdf5f5;
+  border: 1px solid #f8d5d4;
+}
+
+.icono-informativo {
+  color: #229a75;
+}
+
+.icono-moderado {
+  color: #d18510;
+}
+
+.icono-critico {
+  color: #c9362a;
+}
+
+.aviso-encabezado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.aviso-tag-id {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.06);
+  color: #4b546b;
+}
+
+.aviso-titulo {
+  font: 700 12px "Manrope", sans-serif;
+  color: #20263a;
+}
+
+.aviso-descripcion {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #5c667e;
+  margin: 0 0 6px;
+}
+
+.aviso-justificacion {
+  font-size: 10px;
+  line-height: 1.5;
+  color: #7b859d;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.08);
+}
+
+.justificacion-etiqueta {
+  font-weight: 700;
+  color: #444d64;
+}
+
+/* DOTS DE MODELOS */
+.indicador-modelo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.dot-unet { background: #518bdc; }
+.dot-cbam { background: #df9847; }
+.dot-modcbam { background: #25a984; }
+.dot-transunet { background: #d34a4a; }
+.dot-ref-3d { background: #7a67dd; }
+
+.color-unet { background: #518bdc; }
+.color-cbam { background: #df9847; }
+.color-modcbam { background: #25a984; }
+.color-transunet { background: #d34a4a; }
+.color-ref-3d { background: #7a67dd; }
+
+/* ==========================================================================
+   ESTILOS DE LA SECCIÓN C: COMPARACIÓN TRANSVERSAL DE ARQUITECTURAS (FASE 4.7D)
+   ========================================================================== */
+
+.seccion-transversal-c {
+  animation: fadeIn 0.25s ease-out;
+}
+
+.etapa-transversal-tag {
+  background: #f0eefd;
+  color: #5d45d4;
+  border: 1px solid #dcd4fa;
+}
+
+.callout-aviso-ranking-global {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: #fdfaf6;
+  border: 1px solid #fae2cc;
+  border-left: 4px solid #e07f28;
+  border-radius: 10px;
+  padding: 14px 18px;
+  margin-top: 16px;
+}
+
+.icono-balanza-pareto {
+  color: #d06d15;
+  margin-top: 2px;
+}
+
+.aviso-ranking-texto strong {
+  display: block;
+  font: 700 13px "Manrope", sans-serif;
+  color: #8c4202;
+  margin-bottom: 4px;
+}
+
+.aviso-ranking-texto p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #634327;
+  margin: 0 0 8px;
+}
+
+.aviso-ranking-alternativa {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #276b4a;
+  background: #f0faf4;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+}
+
+/* APARTADOS COMUNES DE SECCIÓN C */
+.bloque-apartado-c {
+  background: #ffffff;
+  border: 1px solid #e7ebf3;
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px rgba(32, 38, 58, 0.03);
+}
+
+.apartado-header-fila {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.apartado-titulo-col {
+  max-width: 800px;
+}
+
+.apartado-numero-tag {
+  font: 700 10.5px "Space Mono", monospace;
+  color: #5d45d4;
+  background: #f2effe;
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.apartado-titulo-col h4 {
+  font: 800 18px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 6px;
+  letter-spacing: -0.4px;
+}
+
+.apartado-subtitulo {
+  font-size: 12px;
+  color: #6c758d;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* SELECTOR DE SUBETAPA EN C1 */
+.selector-etapa-c1-tabs {
+  display: flex;
+  background: #f4f6fa;
+  padding: 3px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.btn-tab-subetapa {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #636d85;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-tab-subetapa.activo {
+  background: #ffffff;
+  color: #20263a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.direccion-metrica {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.metrica-mayor-mejor {
+  color: #22865c;
+}
+
+.metrica-menor-mejor {
+  color: #b33939;
+}
+
+.tabla-meta-contexto {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.meta-info-texto {
+  font-size: 11.5px;
+  color: #636d85;
+}
+
+.col-analisis-cualitativo {
+  font-size: 11px;
+  line-height: 1.45;
+  max-width: 200px;
+}
+
+.ventaja-celda {
+  color: #1a6d45;
+  background: #f8fdf9;
+}
+
+.limitacion-celda {
+  color: #8c3f3f;
+  background: #fdf8f8;
+}
+
+.submetrica-valor {
+  display: block;
+  font-size: 10px;
+  color: #7d869d;
+  font-weight: normal;
+}
+
+.col-fn-conteo {
+  text-align: center;
+}
+
+.fn-tag {
+  display: inline-block;
+  font: 700 11px "Space Mono", monospace;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+
+.fn-min {
+  background: #eafaf1;
+  color: #1a7541;
+  border: 1px solid #bde7ce;
+}
+
+.fn-med {
+  background: #fef7ec;
+  color: #a36109;
+  border: 1px solid #fae4bf;
+}
+
+.fn-max {
+  background: #fdf2f2;
+  color: #b52b2b;
+  border: 1px solid #f8cdcd;
+}
+
+/* APARTADO C2: HARDWARE Y COMPLEJIDAD */
+.badge-hardware-oficial {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #eef2fa;
+  color: #2a3c6b;
+  border: 1px solid #d4def1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font: 600 11.5px "Space Mono", monospace;
+}
+
+.hardware-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.card-hw-stat {
+  background: #fafbfe;
+  border: 1px solid #e7ebf5;
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hw-stat-label {
+  font-size: 11px;
+  color: #6e7892;
+  margin-bottom: 4px;
+}
+
+.hw-stat-val {
+  font: 800 15px "Manrope", sans-serif;
+  color: #20263a;
+  margin-bottom: 4px;
+}
+
+.hw-stat-sub {
+  font-size: 10.5px;
+  color: #8c95ab;
+}
+
+.card-hw-vram-alert {
+  border-left: 3px solid #d97706;
+}
+
+.vram-no-disponible {
+  color: #b45309;
+  font-family: "Space Mono", monospace;
+}
+
+.tag-vram-no-disp {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #fdf6ec;
+  color: #b45309;
+  border: 1px dashed #fbd38d;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font: 600 11px "Space Mono", monospace;
+}
+
+.tag-condiciones {
+  font: 500 10.5px "Space Mono", monospace;
+  color: #55607a;
+  background: #f2f4f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.badge-tiempo-real {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font: 600 11px "Manrope", sans-serif;
+}
+
+.badge-tiempo-real.apto {
+  background: #edfbf3;
+  color: #1a7c48;
+}
+
+.callout-rigor-vram {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #f9fbfd;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-top: 14px;
+  font-size: 11.5px;
+  line-height: 1.55;
+  color: #4a5568;
+}
+
+.callout-rigor-vram svg {
+  color: #4a72b2;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+/* APARTADO C3: TRADE-OFFS */
+.compromisos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.tarjeta-compromiso-card {
+  background: #ffffff;
+  border: 1px solid #e2e7f2;
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tarjeta-compromiso-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(32, 38, 58, 0.05);
+}
+
+.compromiso-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.tag-compromiso-id {
+  font: 700 10.5px "Space Mono", monospace;
+  background: #ebf0fd;
+  color: #2b57b9;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.compromiso-dimensiones {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5d6783;
+}
+
+.separador-vs {
+  color: #d97706;
+  margin: 0 5px;
+}
+
+.compromiso-titulo {
+  font: 700 14px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 8px;
+}
+
+.compromiso-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #636d85;
+  margin: 0 0 12px;
+}
+
+.compromiso-hallazgo-box,
+.compromiso-implicacion-box {
+  background: #f8fafc;
+  border-left: 3px solid #94a3b8;
+  padding: 8px 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.compromiso-hallazgo-box {
+  border-left-color: #3b82f6;
+  background: #f4f8fe;
+}
+
+.compromiso-hallazgo-box p,
+.compromiso-implicacion-box p {
+  margin: 2px 0 0;
+  color: #334155;
+}
+
+.hallazgo-label {
+  color: #1d4ed8;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.compromiso-implicacion-box {
+  border-left-color: #10b981;
+  background: #f0fdf9;
+}
+
+.implicacion-label {
+  color: #047857;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* VISUALIZACIONES EN C3 */
+.bloque-visualizaciones-transversales {
+  background: #fafbfe;
+  border: 1px solid #e3e8f4;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 14px;
+}
+
+.viz-header-fila {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.viz-header-fila h5 {
+  font: 700 15px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 3px;
+}
+
+.viz-header-fila p {
+  font-size: 11.5px;
+  color: #727b92;
+  margin: 0;
+}
+
+.selector-grafica-tabs {
+  display: flex;
+  background: #eef2f9;
+  padding: 3px;
+  border-radius: 8px;
+  gap: 4px;
+}
+
+.btn-tab-grafica {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: #5c667f;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-tab-grafica.activo {
+  background: #ffffff;
+  color: #20263a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.grafica-panel {
+  background: #ffffff;
+  border: 1px solid #e7ecf5;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.grafica-descripcion-top h6 {
+  font: 700 13px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0 0 4px;
+}
+
+.grafica-descripcion-top p {
+  font-size: 11px;
+  color: #6c768e;
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+/* SCATTER DIAGNOSTICO EN CSS PURO ACCESIBLE */
+.scatter-canvas {
+  position: relative;
+  height: 280px;
+  background: #fbfcfe;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 14px;
+}
+
+.scatter-eje-y-label {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.scatter-eje-x-label {
+  position: absolute;
+  bottom: 8px;
+  right: 14px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.scatter-grid-lines .grid-line {
+  position: absolute;
+  background: #edf2f7;
+}
+
+.grid-line.horizontal {
+  left: 40px;
+  right: 20px;
+  height: 1px;
+}
+
+.grid-line.horizontal span {
+  position: absolute;
+  left: -32px;
+  top: -8px;
+  font: 600 9.5px "Space Mono", monospace;
+  color: #94a3b8;
+}
+
+.grid-line.vertical {
+  top: 30px;
+  bottom: 30px;
+  width: 1px;
+}
+
+.grid-line.vertical span {
+  position: absolute;
+  bottom: -20px;
+  left: -10px;
+  font: 600 9.5px "Space Mono", monospace;
+  color: #94a3b8;
+}
+
+.scatter-punto {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, 50%);
+  cursor: pointer;
+}
+
+.scatter-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.scatter-etiqueta {
+  background: rgba(32, 38, 58, 0.9);
+  color: #ffffff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+}
+
+.scatter-etiqueta strong {
+  font-size: 11px;
+}
+
+.scatter-etiqueta span {
+  font-size: 9.5px;
+  color: #d1d5db;
+}
+
+.leyenda-scatter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+  font-size: 11px;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #4b5563;
+}
+
+.leyenda-item .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* BARRAS PARAMS VS RENDIMIENTO */
+.barras-costo-param-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.tarjeta-costo-modelo {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.modelo-top-fila {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13.5px;
+  margin-bottom: 14px;
+}
+
+.indicadores-comparados-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.medicion-fila {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  font-size: 11.5px;
+}
+
+.medicion-nombre {
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.medicion-fila strong {
+  white-space: nowrap;
+}
+
+.barra-pista.mini {
+  height: 5px;
+  margin-bottom: 6px;
+}
+
+.veredicto-costo {
+  text-align: center;
+}
+
+.tag-costo {
+  display: inline-block;
+  font: 700 10px "Manrope", sans-serif;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.tag-costo.optimo {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.tag-costo.eficiente {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.tag-costo.moderado {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+.tag-costo.alto {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+/* BARRAS DE LATENCIA Y FPS */
+.grafica-barras-hw-contenedor {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.hw-barra-fila {
+  display: grid;
+  grid-template-columns: 140px 1fr 180px;
+  align-items: center;
+  gap: 16px;
+}
+
+.hw-modelo-col {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+
+.hw-numeros-fila {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: #475569;
+  margin-bottom: 6px;
+  gap: 12px;
+}
+
+.hw-numeros-fila span {
+  white-space: nowrap;
+}
+
+.hw-numeros-fila strong {
+  color: #1e293b;
+}
+
+.badge-umbral-tiempo-real {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #ecfdf5;
+  color: #059669;
+  font: 600 10.5px "Space Mono", monospace;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.nota-umbral-fps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #64748b;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+/* APARTADO C4: SÍNTESIS POR ARQUITECTURA */
+.filtro-arquitectura-selector {
+  display: flex;
+  background: #f1f4f9;
+  padding: 3px;
+  border-radius: 8px;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.btn-filtro-arq {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  font-size: 11.5px;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: #556079;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-filtro-arq.activo {
+  background: #ffffff;
+  color: #20263a;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.sintesis-modelos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.tarjeta-sintesis-arquitectura {
+  background: #ffffff;
+  border: 1px solid #e2e7f2;
+  border-radius: 12px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tarjeta-sintesis-arquitectura.arq-modcbam {
+  border-top: 4px solid #25a984;
+}
+
+.tarjeta-sintesis-arquitectura.arq-unet {
+  border-top: 4px solid #518bdc;
+}
+
+.tarjeta-sintesis-arquitectura.arq-cbam {
+  border-top: 4px solid #df9847;
+}
+
+.tarjeta-sintesis-arquitectura.arq-transunet {
+  border-top: 4px solid #d34a4a;
+}
+
+.sintesis-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sintesis-titulo-bloque {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sintesis-titulo-bloque h5 {
+  font: 800 17px "Manrope", sans-serif;
+  color: #20263a;
+  margin: 0;
+}
+
+.categoria-modelo-sub {
+  font-size: 11px;
+  color: #727c94;
+}
+
+.complejidad-pills-grupo {
+  display: flex;
+  gap: 6px;
+}
+
+.pill-hw {
+  font: 700 10px "Space Mono", monospace;
+  background: #f1f5f9;
+  color: #334155;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+
+.sintesis-card-secciones {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.seccion-sintesis-item {
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.item-subtitulo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+
+.icono-check-verde { color: #16a34a; }
+.icono-cruz-roja { color: #dc2626; }
+.icono-hw-azul { color: #2563eb; }
+.icono-escenarios-morado { color: #7c3aed; }
+.icono-alerta-ambar { color: #d97706; }
+
+.seccion-sintesis-item ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #475569;
+}
+
+.seccion-sintesis-item ul li {
+  margin-bottom: 4px;
+}
+
+.item-limitaciones ul li {
+  color: #991b1b;
+}
+
+.hw-datos-resumen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #334155;
+}
+
+.hw-disp-nota {
+  display: block;
+  width: 100%;
+  font-size: 10px;
+  color: #64748b;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.item-advertencias ul li {
+  color: #92400e;
+}
+
+.aviso-transversal-3d {
+  margin-top: 8px;
+}
+
+/* =========================================================================
+ * SECCIÓN D: CONVERGENCIA Y DINÁMICA DE ENTRENAMIENTO (FASE 4.7E)
+ * ========================================================================= */
+
+.seccion-convergencia-d {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.banner-convergencia {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-left: 4px solid #0284c7;
+}
+
+.aviso-convergencia-metodologica {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-top: 14px;
+}
+
+.filtro-arquitectura-convergencia {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+
+.filtro-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.d1-metricas-grid,
+.d2-metricas-grid {
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.contenedor-svg-convergencia {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px 14px;
+  overflow-x: auto;
+}
+
+.svg-convergencia {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.leyenda-convergencia-grafica {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.item-leyenda-conv {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #334155;
+}
+
+.leyenda-conv-nombre {
+  font-weight: 600;
+}
+
+.leyenda-conv-pico {
+  color: #0f172a;
+}
+
+.leyenda-conv-cierre {
+  color: #64748b;
+  font-size: 10.5px;
+}
+
+.conv-nota-estilo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 11.5px;
+  color: #475569;
+}
+
+.tag-conv-estilo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.muestra-linea-dash {
+  display: inline-block;
+  width: 20px;
+  height: 2px;
+  border-top: 2px dashed #475569;
+}
+
+.muestra-linea-solid {
+  display: inline-block;
+  width: 20px;
+  height: 2.5px;
+  background: #0f172a;
+}
+
+.linea-muestra-train {
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: #475569;
+}
+
+.badge-epoca-destacada {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 600;
+  font-size: 11px;
+  border-radius: 4px;
+  border: 1px solid #bfdbfe;
+}
+
+.valor-dice-destacado {
+  color: #047857;
+  font-weight: 700;
+}
+
+.tag-delta {
+  display: inline-block;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+.tag-delta.delta-bajo {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.tag-delta.delta-alto {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.tag-loss-trayectoria {
+  font-family: monospace;
+  font-size: 11px;
+  color: #475569;
+}
+
+.tag-early-stopping {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #fffbeb;
+  color: #b45309;
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid #fde68a;
+}
+
+.tag-encoder-congelado {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f5f3ff;
+  color: #6d28d9;
+  font-size: 10.5px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid #ddd6fe;
+}
+
+.fila-indicador-estabilidad .col-formula {
+  max-width: 220px;
+}
+
+.codigo-formula {
+  font-family: monospace;
+  font-size: 10px;
+  background: #f1f5f9;
+  padding: 3px 6px;
+  border-radius: 4px;
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #0f172a;
+}
+
+.sub-metrica-e2 {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.destacado-inestable {
+  color: #b45309;
+  font-weight: 700;
+}
+
+.col-interpretacion-ind {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #334155;
+  max-width: 250px;
+}
+
+.brechas-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+  margin-bottom: 14px;
+}
+
+.tarjeta-brecha-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brecha-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brecha-titulo-fila {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag-etapa-badge {
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 1px 6px;
+  background: #f1f5f9;
+  border-radius: 3px;
+  color: #475569;
+}
+
+.badge-nivel-brecha {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.badge-nivel-brecha.brecha-moderada {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.badge-nivel-brecha.brecha-minima {
+  background: #f0fdf4;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.brecha-hallazgo {
+  font-size: 12px;
+  color: #1e293b;
+  line-height: 1.45;
+}
+
+.brecha-alerta {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #92400e;
+  background: #fefce8;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #fef08a;
+  line-height: 1.4;
+}
+
+.subtexto-perdidas {
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+@media (max-width: 1200px) {
+  .metricas-resumen-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1024px) {
+  .interpretacion-page {
+    padding: 20px 24px 36px;
+  }
+  .intro-etapas-grid,
+  .interpretacion-cuerpo-grid,
+  .matriz-grid-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .interpretacion-page {
+    padding: 16px 14px 28px;
+  }
+  .metricas-resumen-grid {
+    grid-template-columns: 1fr;
+  }
+  .grafica-fila-modelo {
+    grid-template-columns: 1fr;
+  }
+  .grafica-barras-grupo {
+    grid-template-columns: 1fr;
+  }
+  .matrices-encabezado {
+    flex-direction: column;
+  }
+  .selector-modelo-matriz-tabs {
+    flex-wrap: wrap;
+    width: 100%;
+  }
+  .btn-tab-matriz {
+    flex: 1;
+    justify-content: center;
+  }
+}

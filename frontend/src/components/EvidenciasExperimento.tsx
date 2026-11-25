@@ -11,141 +11,24 @@ import {
 
 import { modelos } from "../data/modelos";
 import type { ResultadoModelo } from "../data/resultados";
+import { generarUUID } from "../utils/uuid";
+import type { Evidencia } from "../services/storage/storageTypes";
+import {
+  consultarEvidencias,
+  guardarEvidencia,
+  borrarEvidencia,
+  esEvidenciaAsociada,
+  esNombreNotebookCompartido,
+  EXPERIMENTOS_CANONICOS,
+  asegurarEvidenciasCompartidas,
+} from "../services/storage/indexedDBService";
 import VisorNotebook from "./VisorNotebook";
 
 interface EvidenciasExperimentoProps {
   experimentos: ResultadoModelo[];
 }
 
-interface Evidencia {
-  id: string;
-  experimentoId: string;
-  nombre: string;
-  tipo: string;
-  fecha: string;
-  archivo: Blob;
-}
-
-const DB_NAME = "pulmovision_evidencias";
-const STORE_NAME = "archivos";
-
-function abrirBaseDatos(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const solicitud = indexedDB.open(DB_NAME, 1);
-
-    solicitud.onupgradeneeded = () => {
-      const db = solicitud.result;
-
-      if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, {
-          keyPath: "id",
-        });
-      }
-    };
-
-    solicitud.onsuccess = () =>
-      resolve(solicitud.result);
-
-    solicitud.onerror = () =>
-      reject(
-        solicitud.error ??
-          new Error("Error al abrir IndexedDB")
-      );
-  });
-}
-
-async function consultarEvidencias(): Promise<Evidencia[]> {
-  const db = await abrirBaseDatos();
-
-  return new Promise((resolve, reject) => {
-    const transaccion = db.transaction(
-      STORE_NAME,
-      "readonly"
-    );
-
-    const solicitud = transaccion
-      .objectStore(STORE_NAME)
-      .getAll();
-
-    solicitud.onsuccess = () =>
-      resolve(solicitud.result as Evidencia[]);
-
-    solicitud.onerror = () =>
-      reject(
-        solicitud.error ??
-          new Error("Error al consultar archivos")
-      );
-
-    transaccion.oncomplete = () => db.close();
-    transaccion.onabort = () => db.close();
-  });
-}
-
-async function guardarEvidencia(
-  evidencia: Evidencia
-): Promise<void> {
-  const db = await abrirBaseDatos();
-
-  return new Promise((resolve, reject) => {
-    const transaccion = db.transaction(
-      STORE_NAME,
-      "readwrite"
-    );
-
-    transaccion
-      .objectStore(STORE_NAME)
-      .put(evidencia);
-
-    transaccion.oncomplete = () => {
-      db.close();
-      resolve();
-    };
-
-    transaccion.onerror = () => {
-      reject(
-        transaccion.error ??
-          new Error("Error al guardar archivo")
-      );
-    };
-
-    transaccion.onabort = () => db.close();
-    transaccion.oncomplete = () => {
-      db.close();
-      resolve();
-    };
-  });
-}
-
-async function borrarEvidencia(
-  id: string
-): Promise<void> {
-  const db = await abrirBaseDatos();
-
-  return new Promise((resolve, reject) => {
-    const transaccion = db.transaction(
-      STORE_NAME,
-      "readwrite"
-    );
-
-    transaccion
-      .objectStore(STORE_NAME)
-      .delete(id);
-
-    transaccion.oncomplete = () => {
-      db.close();
-      resolve();
-    };
-
-    transaccion.onerror = () => {
-      reject(
-        transaccion.error ??
-          new Error("Error al eliminar archivo")
-      );
-    };
-
-    transaccion.onabort = () => db.close();
-  });
-}
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
 
 export default function EvidenciasExperimento({
   experimentos,
@@ -172,11 +55,13 @@ export default function EvidenciasExperimento({
       (item) => item.id === experimentoId
     ) ?? experimentos[0];
 
-  // Recuperar archivos guardados
+  // Recuperar archivos guardados y asegurar asociaciones de evidencias compartidas
   useEffect(() => {
     let activo = true;
 
-    consultarEvidencias()
+    asegurarEvidenciasCompartidas()
+      .catch(() => {})
+      .then(() => consultarEvidencias())
       .then((datos) => {
         if (activo) {
           setEvidencias(datos);
@@ -212,6 +97,14 @@ export default function EvidenciasExperimento({
 
     if (!archivo || !experimentoActual) return;
 
+    if (archivo.size > MAX_FILE_SIZE) {
+      setMensaje(
+        "El archivo supera el límite de 50 MB permitido."
+      );
+      evento.target.value = "";
+      return;
+    }
+
     const extension = archivo.name
       .split(".")
       .pop()
@@ -232,9 +125,16 @@ export default function EvidenciasExperimento({
     setMensaje("");
 
     try {
+      const esCompartido =
+        extension === "ipynb" && esNombreNotebookCompartido(archivo.name);
+
       const evidencia: Evidencia = {
-        id: crypto.randomUUID(),
+        id: generarUUID(),
         experimentoId: experimentoActual.id,
+        experimentoIds: esCompartido
+          ? [...EXPERIMENTOS_CANONICOS]
+          : [experimentoActual.id],
+        esCompartida: esCompartido,
         nombre: archivo.name,
         tipo: extension,
         fecha: new Date().toISOString(),
@@ -343,11 +243,10 @@ export default function EvidenciasExperimento({
     }
   };
 
-  // Archivos del experimento seleccionado
+  // Archivos del experimento seleccionado (incluye individuales y compartidos)
   const evidenciasActuales = evidencias.filter(
     (item) =>
-      item.experimentoId ===
-      experimentoActual?.id
+      esEvidenciaAsociada(item, experimentoActual?.id ?? "")
   );
 
   return (
@@ -436,9 +335,16 @@ export default function EvidenciasExperimento({
                     <FileText size={22} />
 
                     <div className="evidencia-info">
-                      <strong>
-                        {evidencia.nombre}
-                      </strong>
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+                        <strong>
+                          {evidencia.nombre}
+                        </strong>
+                        {evidencia.esCompartida && (
+                          <span className="badge-estado badge-compartida">
+                            Compartida (4 arquitecturas)
+                          </span>
+                        )}
+                      </div>
 
                       <span>
                         {evidencia.tipo.toUpperCase()}

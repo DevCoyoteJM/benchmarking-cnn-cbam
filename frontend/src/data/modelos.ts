@@ -17,8 +17,9 @@ export const modelos: ModeloIA[] = [
   {
     id: "unet",
     nombre: "U-Net",
-    descripcion: "Arquitectura de referencia.",
-    categoria: "CNN",
+    descripcion:
+      "Arquitectura convolucional base de referencia para la segmentación y detección de lesiones pulmonares.",
+    categoria: "CNN Base",
     principal: true,
     estado: "pendiente",
     color: "unet",
@@ -26,8 +27,9 @@ export const modelos: ModeloIA[] = [
   {
     id: "unet-cbam",
     nombre: "U-Net + CBAM",
-    descripcion: "Arquitectura con mecanismo de atención CBAM.",
-    categoria: "CNN con atención",
+    descripcion:
+      "Arquitectura optimizada con el Módulo de Atención Convolucional de Bloque (CBAM) en canales y espacio.",
+    categoria: "CNN con Atención",
     principal: true,
     estado: "pendiente",
     color: "cbam",
@@ -35,8 +37,9 @@ export const modelos: ModeloIA[] = [
   {
     id: "modcbam",
     nombre: "ModCBAM",
-    descripcion: "Variante modificada del mecanismo de atención.",
-    categoria: "Modelo experimental",
+    descripcion:
+      "Variante experimental con modificación en el mecanismo de atención para análisis comparativo.",
+    categoria: "Variante Experimental",
     principal: false,
     estado: "pendiente",
     color: "modcbam",
@@ -44,8 +47,9 @@ export const modelos: ModeloIA[] = [
   {
     id: "transunet",
     nombre: "TransUNet",
-    descripcion: "Arquitectura adicional para comparación.",
-    categoria: "Modelo experimental",
+    descripcion:
+      "Arquitectura híbrida que combina Transformer y U-Net como punto de comparación de vanguardia.",
+    categoria: "Híbrido / Transformer",
     principal: false,
     estado: "pendiente",
     color: "transunet",

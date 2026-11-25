@@ -1,8 +1,19 @@
 import { Download } from "lucide-react";
 import type { ResultadoModelo } from "../data/resultados";
 
-interface ExportarResultadosProps {
+export interface ExportarResultadosProps {
   experimentos: ResultadoModelo[];
+}
+
+/**
+ * Serializa la lista de experimentos a formato JSON formateado con 2 espacios,
+ * preservando todas las propiedades del modelo y su configuración experimental completa.
+ * Garantiza total compatibilidad con respaldos anteriores.
+ */
+export function serializarExperimentos(
+  experimentos: ResultadoModelo[]
+): string {
+  return JSON.stringify(experimentos, null, 2);
 }
 
 export default function ExportarResultados({
@@ -14,7 +25,7 @@ export default function ExportarResultados({
       return;
     }
 
-    const contenido = JSON.stringify(experimentos, null, 2);
+    const contenido = serializarExperimentos(experimentos);
 
     const archivo = new Blob([contenido], {
       type: "application/json",

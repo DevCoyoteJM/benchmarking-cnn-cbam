@@ -177,9 +177,15 @@ return convertirValorATexto(textoPlano);
 function esBase64Valido(valor: string): boolean {
   const limpio = valor.replace(/\s/g, "");
 
-return (
-    limpio.length > 0 &&
-    /^[A-Za-z0-9+/]*={0,2}$/.test(limpio)
+  if (
+    limpio.length === 0 ||
+    limpio.length % 4 === 1
+  ) {
+    return false;
+  }
+
+  return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2,3})?$/.test(
+    limpio
   );
 }
 
@@ -371,7 +377,7 @@ return (
 <strong>
                         Celda {indice + 1} —{" "}
                         {esCodigo
-                          ? "Código Python"
+                          ? "Código"
                           : esMarkdown
                             ? "Markdown"
                             : celda.cell_type}

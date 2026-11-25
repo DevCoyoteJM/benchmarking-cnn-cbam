@@ -1,0 +1,370 @@
+{
+  "version": "1.0.0",
+  "origen": "LIDC_IDRC_modelo_CNN_CBAM_Transformer_ModifiedCBAM.ipynb",
+  "total_celdas_notebook": 51,
+  "total_recursos_extraidos": 8,
+  "resumen_por_categoria": {
+    "metricas": 5,
+    "atencion": 2,
+    "comparaciones": 1,
+    "tomografias": 3,
+    "mascaras": 2,
+    "segmentaciones": 1,
+    "arquitecturas": 0,
+    "otros": 0
+  },
+  "recursos": [
+    {
+      "id": "EV-01",
+      "nombre_archivo": "curvas_aprendizaje_e1_segmentacion.png",
+      "categoria_principal": "metricas",
+      "subcategorias_visibles": [
+        "metricas"
+      ],
+      "tipo_recurso": "Gráfica comparativa de entrenamiento/validación (E1)",
+      "celda_origen": 32,
+      "indice_salida": 0,
+      "etapa": "E1",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 1390,
+        "alto": 495
+      },
+      "tamano_bytes": 116050,
+      "sha256": "774f4563e7ccc06cabdd44dc3956daf667e83a2fc5372cbf1e8d82bb2950eab7",
+      "titulo": "Etapa 1: Evolución de Segmentación y Detección",
+      "descripcion": "Evolución por época de la función de pérdida de validación (BCE + Hausdorff) y el Coeficiente Dice en validación para las 4 arquitecturas comparadas (UNet en azul, CBAM en naranja, ModCBAM en verde y TransUNet en rojo). Configuración experimental: tope de 150 épocas con parada temprana (Early Stopping, paciencia 25 según Dice de validación). Épocas efectivas alcanzadas: U-Net (80), U-Net + CBAM (48), ModCBAM (75) y TransUNet (106). Las líneas terminan en sus respectivas épocas de parada sin que todos los modelos completaran el máximo configurado.",
+      "ruta_relativa_public": "/evidencias/metricas/curvas_aprendizaje_e1_segmentacion.png",
+      "ruta_relativa_directa": "/evidencias/curvas_aprendizaje_e1_segmentacion.png",
+      "metadatos_entrenamiento": {
+        "etapa": "E1",
+        "epocas_maximas_configuradas": 150,
+        "criterio_parada_general": "Parada temprana (Early Stopping) con paciencia de 25 épocas según Coeficiente Dice en validación",
+        "paciencia_general": 25,
+        "nota_metodologica": "Las épocas efectivas de Etapa 1 dependen exclusivamente de la parada temprana según el Dice de validación. Ningún modelo completó el máximo configurado de 150 épocas.",
+        "arquitecturas": [
+          {
+            "arquitectura": "UNet",
+            "etapa": "E1",
+            "epocas_efectivas": 80,
+            "epocas_maximas_configuradas": 150,
+            "criterio_parada": "Early Stopping (25 épocas sin mejora tras pico en época 55)",
+            "paciencia": 25,
+            "mejor_epoca": 55,
+            "mejor_metrica": "Dice de validación",
+            "mejor_valor": 0.895
+          },
+          {
+            "arquitectura": "CBAM",
+            "etapa": "E1",
+            "epocas_efectivas": 48,
+            "epocas_maximas_configuradas": 150,
+            "criterio_parada": "Early Stopping (25 épocas sin mejora tras pico en época 23)",
+            "paciencia": 25,
+            "mejor_epoca": 23,
+            "mejor_metrica": "Dice de validación",
+            "mejor_valor": 0.8731
+          },
+          {
+            "arquitectura": "ModCBAM",
+            "etapa": "E1",
+            "epocas_efectivas": 75,
+            "epocas_maximas_configuradas": 150,
+            "criterio_parada": "Early Stopping (25 épocas sin mejora tras pico en época 50)",
+            "paciencia": 25,
+            "mejor_epoca": 50,
+            "mejor_metrica": "Dice de validación",
+            "mejor_valor": 0.8935
+          },
+          {
+            "arquitectura": "TransUNet",
+            "etapa": "E1",
+            "epocas_efectivas": 106,
+            "epocas_maximas_configuradas": 150,
+            "criterio_parada": "Early Stopping (25 épocas sin mejora tras pico en época 81)",
+            "paciencia": 25,
+            "mejor_epoca": 81,
+            "mejor_metrica": "Dice de validación",
+            "mejor_valor": 0.8969
+          }
+        ]
+      }
+    },
+    {
+      "id": "EV-02",
+      "nombre_archivo": "curvas_aprendizaje_e2_clasificacion.png",
+      "categoria_principal": "metricas",
+      "subcategorias_visibles": [
+        "metricas"
+      ],
+      "tipo_recurso": "Gráfica comparativa de entrenamiento/validación (E2)",
+      "celda_origen": 32,
+      "indice_salida": 1,
+      "etapa": "E2",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 1790,
+        "alto": 495
+      },
+      "tamano_bytes": 226897,
+      "sha256": "1131e505037f25ea86c1e670eefccf3871f2731db392fed8cfbd354c2b981722",
+      "titulo": "Etapa 2: Evolución de Clasificación (Nódulo Benigno vs Maligno)",
+      "descripcion": "Evolución por época de la función de pérdida de validación (BCE), métrica MCC (Matthews Correlation Coefficient) y F1-Macro en validación para las 4 arquitecturas comparadas con encoder congelado. Configuración experimental: 100 épocas configuradas con paciencia 50. Las cuatro arquitecturas (U-Net, U-Net + CBAM, ModCBAM y TransUNet) completaron íntegramente las 100 épocas efectivas sin activar la parada temprana.",
+      "ruta_relativa_public": "/evidencias/metricas/curvas_aprendizaje_e2_clasificacion.png",
+      "ruta_relativa_directa": "/evidencias/curvas_aprendizaje_e2_clasificacion.png",
+      "metadatos_entrenamiento": {
+        "etapa": "E2",
+        "epocas_maximas_configuradas": 100,
+        "criterio_parada_general": "Ciclo completo de 100 épocas (paciencia 50 no alcanzada)",
+        "paciencia_general": 50,
+        "nota_metodologica": "En Etapa 2 con encoder congelado, las cuatro arquitecturas completaron con exactitud las 100 épocas efectivas programadas.",
+        "arquitecturas": [
+          {
+            "arquitectura": "UNet",
+            "etapa": "E2",
+            "epocas_efectivas": 100,
+            "epocas_maximas_configuradas": 100,
+            "criterio_parada": "Ciclo completo completado (100 épocas)",
+            "paciencia": 50,
+            "mejor_epoca": 72,
+            "mejor_metrica": "MCC de validación",
+            "mejor_valor": 0.7276
+          },
+          {
+            "arquitectura": "CBAM",
+            "etapa": "E2",
+            "epocas_efectivas": 100,
+            "epocas_maximas_configuradas": 100,
+            "criterio_parada": "Ciclo completo completado (100 épocas)",
+            "paciencia": 50,
+            "mejor_epoca": 75,
+            "mejor_metrica": "MCC de validación",
+            "mejor_valor": 0.7293
+          },
+          {
+            "arquitectura": "ModCBAM",
+            "etapa": "E2",
+            "epocas_efectivas": 100,
+            "epocas_maximas_configuradas": 100,
+            "criterio_parada": "Ciclo completo completado (100 épocas)",
+            "paciencia": 50,
+            "mejor_epoca": 54,
+            "mejor_metrica": "MCC de validación",
+            "mejor_valor": 0.7388
+          },
+          {
+            "arquitectura": "TransUNet",
+            "etapa": "E2",
+            "epocas_efectivas": 100,
+            "epocas_maximas_configuradas": 100,
+            "criterio_parada": "Ciclo completo completado (100 épocas)",
+            "paciencia": 50,
+            "mejor_epoca": 66,
+            "mejor_metrica": "MCC de validación",
+            "mejor_valor": 0.6866
+          }
+        ]
+      }
+    },
+    {
+      "id": "EV-03",
+      "nombre_archivo": "matrices_confusion_clasificacion_malignidad.png",
+      "categoria_principal": "metricas",
+      "subcategorias_visibles": [
+        "metricas"
+      ],
+      "tipo_recurso": "Mapas de calor / Matrices de confusión diagnóstica",
+      "celda_origen": 36,
+      "indice_salida": 0,
+      "etapa": "E2",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 1989,
+        "alto": 440
+      },
+      "tamano_bytes": 36207,
+      "sha256": "8d53c6f209f2f98fd2376f47ade2883a650df8cfd39e4ab134fa0571562a9e1e",
+      "titulo": "Matrices de Confusión: Clasificación Benigno vs Maligno",
+      "descripcion": "Conjunto de 4 matrices de confusión 2x2 evaluadas sobre el subconjunto de prueba independiente (test set), contrastando el diagnóstico real (Ground Truth) frente a la predicción binarizada con umbral 0.5 para UNet, CBAM, ModCBAM y TransUNet.",
+      "ruta_relativa_public": "/evidencias/metricas/matrices_confusion_clasificacion_malignidad.png",
+      "ruta_relativa_directa": "/evidencias/matrices_confusion_clasificacion_malignidad.png"
+    },
+    {
+      "id": "EV-04",
+      "nombre_archivo": "curvas_roc_clasificacion_malignidad.png",
+      "categoria_principal": "metricas",
+      "subcategorias_visibles": [
+        "metricas"
+      ],
+      "tipo_recurso": "Curvas ROC y Área Bajo la Curva (AUC)",
+      "celda_origen": 38,
+      "indice_salida": 0,
+      "etapa": "E2",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 706,
+        "alto": 707
+      },
+      "tamano_bytes": 79680,
+      "sha256": "46672271f3ba1aa195c5e8e9b2bae881f59f77ea8959517db12e92c32c3ada76",
+      "titulo": "Curvas ROC: Clasificación de Malignidad en Nódulos",
+      "descripcion": "Curvas Características Operativas del Receptor (ROC) superpuestas comparando la tasa de verdaderos positivos (sensibilidad) frente a falsos positivos (1 - especificidad) con reporte de AUC: UNet (AUC=0.914), CBAM (AUC=0.896), ModCBAM (AUC=0.900) y TransUNet (AUC=0.809) junto a la diagonal de azar.",
+      "ruta_relativa_public": "/evidencias/metricas/curvas_roc_clasificacion_malignidad.png",
+      "ruta_relativa_directa": "/evidencias/curvas_roc_clasificacion_malignidad.png"
+    },
+    {
+      "id": "EV-05",
+      "nombre_archivo": "concordancia_bland_altman_area_segmentacion.png",
+      "categoria_principal": "metricas",
+      "subcategorias_visibles": [
+        "metricas"
+      ],
+      "tipo_recurso": "Gráficos de dispersión y concordancia clínica (Bland-Altman)",
+      "celda_origen": 40,
+      "indice_salida": 0,
+      "etapa": "E1",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 2390,
+        "alto": 490
+      },
+      "tamano_bytes": 156662,
+      "sha256": "a0fcc3ba849adf2b64bf44ea4e671fd6a7cec54e6e1821c88939f89778a56a31",
+      "titulo": "Gráficos de Bland-Altman: Concordancia Geométrica de Área",
+      "descripcion": "Análisis de concordancia clínica para las 4 arquitecturas entre el área real del nódulo pulmonar en mm² y el área calculada a partir de la segmentación predicha. Muestra el sesgo medio (línea roja) y los límites de concordancia ±1.96 desviaciones estándar (líneas grises discontinuas).",
+      "ruta_relativa_public": "/evidencias/metricas/concordancia_bland_altman_area_segmentacion.png",
+      "ruta_relativa_directa": "/evidencias/concordancia_bland_altman_area_segmentacion.png"
+    },
+    {
+      "id": "EV-06",
+      "nombre_archivo": "mapas_saliencia_interpretabilidad_visual.png",
+      "categoria_principal": "atencion",
+      "subcategorias_visibles": [
+        "tomografias",
+        "mascaras",
+        "atencion"
+      ],
+      "tipo_recurso": "Panel comparativo de interpretabilidad (Saliency Maps)",
+      "celda_origen": 42,
+      "indice_salida": 0,
+      "etapa": "E2",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 2349,
+        "alto": 1193
+      },
+      "tamano_bytes": 376801,
+      "sha256": "7c335563fe6c146594a487836ff72df423e0a234cceff1253efffe44ca2d384f",
+      "titulo": "Mapas de Activación Visual (Saliency Maps)",
+      "descripcion": "Panel compuesto de 3 pacientes con nódulos malignos (filas) y 6 columnas: Col 0: Corte tomográfico TAC original; Col 1: Máscara Ground Truth del radiólogo sobrepuesta en rojo; Cols 2-5: Mapas de saliencia visual por gradiente (colormap jet) y probabilidad de malignidad para UNet, CBAM, ModCBAM y TransUNet.",
+      "ruta_relativa_public": "/evidencias/atencion/mapas_saliencia_interpretabilidad_visual.png",
+      "ruta_relativa_directa": "/evidencias/mapas_saliencia_interpretabilidad_visual.png"
+    },
+    {
+      "id": "EV-07",
+      "nombre_archivo": "mapas_gradcam_convolucion_clasificacion.png",
+      "categoria_principal": "atencion",
+      "subcategorias_visibles": [
+        "tomografias",
+        "atencion"
+      ],
+      "tipo_recurso": "Panel comparativo de activación de clase (Grad-CAM)",
+      "celda_origen": 44,
+      "indice_salida": 0,
+      "etapa": "E2",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 1951,
+        "alto": 796
+      },
+      "tamano_bytes": 250418,
+      "sha256": "921e758695b30ed6d8c52b09d6243a9c57afdb7ca6c95e11f991fd9e39a7d349",
+      "titulo": "Análisis Visual con Grad-CAM (Última Capa Convolucional)",
+      "descripcion": "Panel de 2 pacientes de prueba (filas) y 5 columnas: Col 0: Corte tomográfico TAC original; Cols 1-4: Mapas de activación ponderada por gradientes (Grad-CAM) generados desde la última capa convolucional hacia la decisión de malignidad para UNet, CBAM, ModCBAM y TransUNet, con indicación porcentual de confianza diagnóstica.",
+      "ruta_relativa_public": "/evidencias/atencion/mapas_gradcam_convolucion_clasificacion.png",
+      "ruta_relativa_directa": "/evidencias/mapas_gradcam_convolucion_clasificacion.png"
+    },
+    {
+      "id": "EV-08",
+      "nombre_archivo": "muestras_visuales_segmentacion_clasificacion.png",
+      "categoria_principal": "comparaciones",
+      "subcategorias_visibles": [
+        "tomografias",
+        "mascaras",
+        "segmentaciones",
+        "comparaciones"
+      ],
+      "tipo_recurso": "Panel visual directo de segmentación geométrica y clasificación clínica",
+      "celda_origen": 46,
+      "indice_salida": 1,
+      "etapa": "E1 + E2",
+      "arquitecturas_asociadas": [
+        "UNet",
+        "CBAM",
+        "ModCBAM",
+        "TransUNet"
+      ],
+      "formato_original": "PNG",
+      "modo_color": "RGBA",
+      "dimensiones": {
+        "ancho": 2047,
+        "alto": 1390
+      },
+      "tamano_bytes": 209515,
+      "sha256": "0e7cc12af784d8d66bd11bbc0deee76ccd778dc3aea6e1dbba6ecd1b3f616fb1",
+      "titulo": "Muestra Visual Directa de Segmentación y Clasificación",
+      "descripcion": "Panel de 4 pacientes/muestras de prueba (filas) y 6 columnas: Col 0: Corte tomográfico original; Col 1: Ground Truth con contorno verde lima de la máscara real y etiqueta Benigno/Maligno; Cols 2-5: Contorno amarillo de la máscara predicha por cada modelo y diagnóstico predicho con probabilidad e indicación cromática de acierto (verde) o fallo (rojo) para UNet, CBAM, ModCBAM y TransUNet.",
+      "ruta_relativa_public": "/evidencias/comparaciones/muestras_visuales_segmentacion_clasificacion.png",
+      "ruta_relativa_directa": "/evidencias/muestras_visuales_segmentacion_clasificacion.png"
+    }
+  ]
+}
